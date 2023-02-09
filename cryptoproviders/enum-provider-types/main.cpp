@@ -72,9 +72,13 @@ int wmain()
 
             std::wcout << std::format(L"Provider type: {:4} ({})\n", provider_type, provider_name);
         }
+
+        return 0;
     }
     catch (const std::exception& error)
     {
         std::cerr << error.what() << std::endl;
+
+        return -1;
     }
 }

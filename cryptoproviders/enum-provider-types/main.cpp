@@ -42,14 +42,14 @@ int wmain()
     {
         for (DWORD index = 0; /* Intentionally empty */; ++index)
         {
-            DWORD provider_type     = 0;
-            DWORD provider_name_len = 0;
+            DWORD provider_type = 0;
+            DWORD type_name_len = 0;
 
             //
             // Let's get provider type's name length
             //
 
-            if (!CryptEnumProviderTypes(index, nullptr, 0, &provider_type, nullptr, &provider_name_len))
+            if (!CryptEnumProviderTypes(index, nullptr, 0, &provider_type, nullptr, &type_name_len))
             {
                 TraceEnumFailure();
                 break;
@@ -59,8 +59,8 @@ int wmain()
             // And now the name itself
             //
 
-            std::wstring provider_name(provider_name_len, 0);
-            if (!CryptEnumProviderTypes(index, nullptr, 0, &provider_type, provider_name.data(), &provider_name_len))
+            std::wstring type_name(type_name_len, 0);
+            if (!CryptEnumProviderTypes(index, nullptr, 0, &provider_type, type_name.data(), &type_name_len))
             {
                 TraceEnumFailure();
                 break;
@@ -70,7 +70,7 @@ int wmain()
             // Well, here I need just to print the type in a pretty way
             //
 
-            std::wcout << std::format(L"Provider type: {:4} ({})\n", provider_type, provider_name);
+            std::wcout << std::format(L"Provider type: {:4} ({})\n", provider_type, type_name);
         }
 
         return 0;

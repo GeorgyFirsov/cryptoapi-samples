@@ -1,7 +1,6 @@
 /**
  * @file common.hpp
- * @brief Набор общих функций и прочего свспомогательного счастья 
- *        для лабораторных по использованию Crypto API
+ * @brief Set of helpers for Crypto API labs
  */
 #pragma once
 
@@ -22,7 +21,7 @@
 namespace cas {
 
 /**
- * @brief Получает текст сообщения об ошибке по ее коду.
+ * @brief Retreives an error message by its code
  */
 std::wstring ErrorMessage(DWORD error_code) noexcept;
 

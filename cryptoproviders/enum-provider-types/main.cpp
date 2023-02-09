@@ -23,8 +23,8 @@
 
 
 /**
- * @brief Выводит информацию об ошибке, произошедшей при перечислении
- *        типов провайдеров (конец перебора ошибкой не считается)
+ * @brief Print an error message while enumerating provider types 
+ *        (end of the types list is not an error)
  */
 void TraceEnumFailure()
 {
@@ -40,13 +40,13 @@ int wmain()
 {
     try
     {
-        for (DWORD index = 0; /* тут ничего нет намеренно */; ++index)
+        for (DWORD index = 0; /* Intentionally empty */; ++index)
         {
             DWORD provider_type     = 0;
             DWORD provider_name_len = 0;
 
             //
-            // Получаю длину буфера под имя провайдера
+            // Let's get provider type's name length
             //
 
             if (!CryptEnumProviderTypes(index, nullptr, 0, &provider_type, nullptr, &provider_name_len))
@@ -56,7 +56,7 @@ int wmain()
             }
 
             //
-            // Ну а теперь получу и само имя провайдера
+            // And now the name itself
             //
 
             std::wstring provider_name(provider_name_len, 0);
@@ -67,10 +67,10 @@ int wmain()
             }
 
             //
-            // Ну и осталось просто распечатать всю полученную инфу
+            // Well, here I need just to print the type in a pretty way
             //
 
-            std::wcout << std::format(L"Provider type: {:2} ({})\n", provider_type, provider_name);
+            std::wcout << std::format(L"Provider type: {:4} ({})\n", provider_type, provider_name);
         }
     }
     catch (const std::exception& error)

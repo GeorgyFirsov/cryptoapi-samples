@@ -13,6 +13,7 @@
 #include <iostream>
 #include <string>
 #include <format>
+#include <functional>
 
 
 //
@@ -53,6 +54,42 @@ static constexpr auto kProviderDescription = "provider to create and delete cont
 static constexpr auto kType                = "type";
 static constexpr auto kTypeDefinition      = "type,t";
 static constexpr auto kTypeDescription     = "type of the provider";
+
+
+/**
+ * @brief Type of handler for algorithms enumeration.
+ */
+using enum_algs_handler_t = std::function<void(const PROV_ENUMALGS&)>;
+
+/**
+ * @brief Enumerates all algorithms supported by provider.
+ *
+ * @param provider Provider to enumerate algorithms for
+ * @param handler Functor to invoke for each supported algorithm
+ */
+void EnumerateAlgorithms(HCRYPTPROV provider, const enum_algs_handler_t& handler)
+{
+    PROV_ENUMALGS alg = {};
+    auto alg_bytes    = reinterpret_cast<BYTE*>(&alg);
+    auto size         = static_cast<DWORD>(sizeof(alg));
+
+    if (!CryptGetProvParam(provider, PP_ENUMALGS, alg_bytes, &size, CRYPT_FIRST))
+    {
+        cas::ThrowError();
+    }
+
+    handler(alg);
+
+    while (CryptGetProvParam(provider, PP_ENUMALGS, alg_bytes, &size, CRYPT_NEXT))
+    {
+        handler(alg);
+    }
+
+    if (const auto last_error = GetLastError(); ERROR_NO_MORE_ITEMS != last_error)
+    {
+        cas::ThrowError(last_error);
+    }
+}
 
 
 int wmain(int argc, wchar_t** argv)
@@ -110,6 +147,11 @@ int wmain(int argc, wchar_t** argv)
         //
         // TODO: enumerate parameters
         //
+
+        EnumerateAlgorithms(provider, [](const PROV_ENUMALGS& alg) {
+            std::cout << std::format(R"(Algorithm "{}" with identifier {})", alg.szName, alg.aiAlgid)
+                      << std::endl;
+        });
 
         return 0;
     }

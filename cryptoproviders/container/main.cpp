@@ -58,20 +58,6 @@ static constexpr auto kContainerDefinition  = "container,c";
 static constexpr auto kContainerDescription = "container name";
 
 
-/**
- * @brief Print an error message while enumerating provider types
- *        (end of the types list is not an error)
- */
-void TraceEnumFailure()
-{
-    if (const auto error = GetLastError();
-        error != ERROR_NO_MORE_ITEMS && error != ERROR_SUCCESS)
-    {
-        std::wcerr << cas::ErrorMessage(error) << std::endl;
-    }
-}
-
-
 int wmain(int argc, wchar_t** argv)
 {
     try

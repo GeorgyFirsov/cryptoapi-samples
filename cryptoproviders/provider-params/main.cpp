@@ -59,7 +59,7 @@ static constexpr auto kTypeDescription     = "type of the provider";
 /**
  * @brief Type of handler for algorithms enumeration.
  */
-using enum_algs_handler_t = std::function<void(const PROV_ENUMALGS&)>;
+using enum_algs_handler_t = std::function<void(const PROV_ENUMALGS_EX&)>;
 
 /**
  * @brief Enumerates all algorithms supported by provider.
@@ -69,18 +69,18 @@ using enum_algs_handler_t = std::function<void(const PROV_ENUMALGS&)>;
  */
 void EnumerateAlgorithms(HCRYPTPROV provider, const enum_algs_handler_t& handler)
 {
-    PROV_ENUMALGS alg = {};
-    auto alg_bytes    = reinterpret_cast<BYTE*>(&alg);
-    auto size         = static_cast<DWORD>(sizeof(alg));
+    PROV_ENUMALGS_EX alg = {};
+    auto alg_bytes       = reinterpret_cast<BYTE*>(&alg);
+    auto size            = static_cast<DWORD>(sizeof(alg));
 
-    if (!CryptGetProvParam(provider, PP_ENUMALGS, alg_bytes, &size, CRYPT_FIRST))
+    if (!CryptGetProvParam(provider, PP_ENUMALGS_EX, alg_bytes, &size, CRYPT_FIRST))
     {
         cas::ThrowError();
     }
 
     handler(alg);
 
-    while (CryptGetProvParam(provider, PP_ENUMALGS, alg_bytes, &size, CRYPT_NEXT))
+    while (CryptGetProvParam(provider, PP_ENUMALGS_EX, alg_bytes, &size, CRYPT_NEXT))
     {
         handler(alg);
     }
@@ -148,8 +148,8 @@ int wmain(int argc, wchar_t** argv)
         // TODO: enumerate parameters
         //
 
-        EnumerateAlgorithms(provider, [](const PROV_ENUMALGS& alg) {
-            std::cout << std::format(R"(Algorithm "{}" with identifier {})", alg.szName, alg.aiAlgid)
+        EnumerateAlgorithms(provider, [](const PROV_ENUMALGS_EX& alg) {
+            std::cout << std::format(R"(Algorithm "{}" ({}))", alg.szLongName, alg.szName)
                       << std::endl;
         });
 

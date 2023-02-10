@@ -71,6 +71,12 @@ struct FormatTraits<std::string>
 
 
 /**
+ * @brief Codepage identifier for Windows-1251.
+ */
+inline constexpr UINT kWin1251 = 1251;
+
+
+/**
  * @brief Retreives an error message by its code.
  * 
  * @param error_code Code to get description for

@@ -71,6 +71,12 @@ int wmain(int argc, wchar_t** argv)
     try
     {
         //
+        // Set Windows-1251 codepage
+        //
+
+        USE_CODEPAGE(cas::kWin1251);
+
+        //
         // Parse options
         //
 

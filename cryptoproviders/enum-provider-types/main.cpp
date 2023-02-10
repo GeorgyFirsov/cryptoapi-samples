@@ -40,6 +40,12 @@ int wmain()
 {
     try
     {
+        //
+        // Set Windows-1251 codepage
+        //
+
+        USE_CODEPAGE(cas::kWin1251);
+
         for (DWORD index = 0; /* Intentionally empty */; ++index)
         {
             DWORD provider_type = 0;

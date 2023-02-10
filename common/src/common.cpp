@@ -30,6 +30,11 @@ Provider::Provider(const std::wstring& container_name, const std::wstring& provi
 { }
 
 
+Provider::Provider(const std::wstring& provider_name, DWORD provider_type, DWORD flags /* = 0 */)
+    : Provider(nullptr, provider_name.c_str(), provider_type, flags)
+{ }
+
+
 Provider::~Provider()
 {
     Clear();

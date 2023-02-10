@@ -119,9 +119,25 @@ class Provider final
     Provider& operator=(Provider&&) = delete;
 
 public:
+    /**
+     * @brief Constructor, that just forwards its arguments into CryptAcquireContext.
+     */
     explicit Provider(LPCWSTR container_name, LPCWSTR provider_name, DWORD provider_type, DWORD flags = 0);
+
+    /**
+     * @brief The same constructor as the previous one, but accepts STL strings 
+     * instead of C-style ones.
+     */
     explicit Provider(const std::wstring& container_name, const std::wstring& provider_name, DWORD provider_type, DWORD flags = 0);
 
+    /**
+     * @brief The same as the previous one, but sets container name to nullptr.
+     */
+    explicit Provider(const std::wstring& provider_name, DWORD provider_type, DWORD flags = 0);
+
+    /**
+     * @brief Destructor. Just calls cas::Provider::Clear.
+     */
     ~Provider();
 
     /**

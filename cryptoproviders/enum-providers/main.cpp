@@ -145,7 +145,7 @@ int wmain(int argc, wchar_t** argv)
             // Well, here I need just to print the type in a pretty way
             //
 
-            std::wcout << std::format(L"Provider: {} (of type {})\n", provider_name, provider_type);
+            std::wcout << std::format(LR"(Provider: "{}" (of type {}))", provider_name, provider_type) << L'\n';
         }
 
         return 0;

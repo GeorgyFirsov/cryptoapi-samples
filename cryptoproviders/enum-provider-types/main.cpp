@@ -76,7 +76,7 @@ int wmain()
             // Well, here I need just to print the type in a pretty way
             //
 
-            std::wcout << std::format(L"Provider type: {:4} ({})\n", provider_type, type_name);
+            std::wcout << std::format(LR"(Provider type: {:4} "{}")", provider_type, type_name) << L'\n';
         }
 
         return 0;

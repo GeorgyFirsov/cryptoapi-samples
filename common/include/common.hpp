@@ -60,13 +60,14 @@ struct FormatTraits<std::string>
 
 
 /**
- * @brief Sets a codepage for current application's console
+ * @brief Sets a codepage for current application's console.
  */
-#define SET_CODEPAGE(cp) static auto cp_init_ = []() { \
-  SetConsoleCP(cp);                                    \
-  SetConsoleOutputCP(cp);                              \
-  return 0;                                            \
-}()
+#define USE_CODEPAGE(cp) static auto cp_init_ =        \
+                             []() {                    \
+                               SetConsoleCP(cp);       \
+                               SetConsoleOutputCP(cp); \
+                               return 0;               \
+                             }()
 
 
 /**

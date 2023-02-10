@@ -110,6 +110,8 @@ String ErrorMessage(DWORD error_code) noexcept
 
 /**
  * @brief Throws a std::runtime_error instance with error code description.
+ * * 
+ * @param error_code Error code to provide description of
  */
 [[noreturn]] inline void ThrowError(DWORD error_code)
 {

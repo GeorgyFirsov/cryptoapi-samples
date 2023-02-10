@@ -3,3 +3,4 @@
 #
 add_subdirectory(enum-provider-types)
 add_subdirectory(enum-providers)
+add_subdirectory(container)

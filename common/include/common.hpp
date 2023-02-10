@@ -60,6 +60,16 @@ struct FormatTraits<std::string>
 
 
 /**
+ * @brief Sets a codepage for current application's console
+ */
+#define SET_CODEPAGE(cp) static auto cp_init_ = []() { \
+  SetConsoleCP(cp);                                    \
+  SetConsoleOutputCP(cp);                              \
+  return 0;                                            \
+}()
+
+
+/**
  * @brief Retreives an error message by its code.
  * 
  * @param error_code Code to get description for
@@ -102,8 +112,8 @@ class Provider final
     Provider& operator=(Provider&&) = delete;
 
 public:
-	explicit Provider(LPCWSTR container_name, LPCWSTR provider_name, DWORD provider_type, DWORD flags = 0);
-	explicit Provider(const std::wstring& container_name, const std::wstring& provider_name, DWORD provider_type, DWORD flags = 0);
+    explicit Provider(LPCWSTR container_name, LPCWSTR provider_name, DWORD provider_type, DWORD flags = 0);
+    explicit Provider(const std::wstring& container_name, const std::wstring& provider_name, DWORD provider_type, DWORD flags = 0);
 
     ~Provider();
 

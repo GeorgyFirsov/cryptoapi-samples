@@ -1,7 +1,5 @@
 #include "common.hpp"
 
-#include <stdexcept>
-
 
 namespace cas {
 
@@ -10,7 +8,7 @@ Provider::Provider(LPCWSTR container_name, LPCWSTR provider_name, DWORD provider
 {
     if (!CryptAcquireContext(&provider_, container_name, provider_name, provider_type, flags))
     {
-        throw std::runtime_error(cas::ErrorMessage<std::string>(GetLastError()));
+        ThrowError();
     }
 
     if (FLAG_ON(CRYPT_DELETEKEYSET, flags))

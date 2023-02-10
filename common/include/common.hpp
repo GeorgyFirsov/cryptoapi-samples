@@ -18,6 +18,7 @@
 
 #include <string>
 #include <utility>
+#include <stdexcept>
 
 
 namespace cas {
@@ -104,6 +105,24 @@ String ErrorMessage(DWORD error_code) noexcept
     }
 
     return result;
+}
+
+
+/**
+ * @brief Throws a std::runtime_error instance with error code description.
+ */
+[[noreturn]] inline void ThrowError(DWORD error_code)
+{
+    throw std::runtime_error(cas::ErrorMessage<std::string>(error_code));
+}
+
+
+/**
+ * @brief Throws a std::runtime_error instance with last error code description.
+ */
+[[noreturn]] inline void ThrowError()
+{
+    ThrowError(GetLastError());
 }
 
 

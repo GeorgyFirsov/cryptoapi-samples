@@ -12,4 +12,5 @@
 #include "details/windows.hpp"
 #include "details/crypto.hpp"
 #include "details/error.hpp"
+#include "details/network.hpp"
 #include "details/utils.hpp"

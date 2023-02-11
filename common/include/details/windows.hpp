@@ -6,6 +6,15 @@
 #pragma once
 
 //
+// Check if Windows.h is included properly before (if it is)
+//
+
+#if defined(_WINDOWS_) && !defined(WIN32_LEAN_AND_MEAN)
+#   error Please define WIN32_LEAN_AND_MEAN before Windows.h include.
+#endif  // Unsupported windows include
+
+
+//
 // Configure Windows.h header
 //
 
@@ -32,3 +41,4 @@
 
 #include <Windows.h>
 #include <wincrypt.h>
+#include <winsock2.h>

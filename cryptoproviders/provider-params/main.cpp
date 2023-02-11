@@ -92,6 +92,36 @@ void EnumerateAlgorithms(HCRYPTPROV provider, const enum_algs_handler_t& handler
 }
 
 
+/**
+ * @brief Type of handler for version querying.
+ */
+using version_handler_t = std::function<void(DWORD, DWORD)>;
+
+/**
+ * @brief Obtains a provider's version, parses it and forwards into
+ * user-defined callback.
+ *
+ * @param provider Provider to get version of
+ * @param handler Functor to invoke with obtained version
+ */
+void QueryVersion(HCRYPTPROV provider, const version_handler_t& handler)
+{
+    DWORD version      = 0;
+    auto version_bytes = reinterpret_cast<BYTE*>(&version);
+    auto size          = static_cast<DWORD>(sizeof(version));
+
+    if (!CryptGetProvParam(provider, PP_VERSION, version_bytes, &size, 0))
+    {
+        cas::ThrowError();
+    }
+
+    const auto major = (version >> 8) & 0xFF;
+    const auto minor = version & 0xFF;
+
+    handler(major, minor);
+}
+
+
 int wmain(int argc, wchar_t** argv)
 {
     try
@@ -145,11 +175,17 @@ int wmain(int argc, wchar_t** argv)
         cas::Provider provider(provider_name, provider_type);
 
         //
-        // TODO: enumerate parameters
+        // Now let's enumerate some parameters, for instance
+        // version and all supported algorithms.
         //
 
+        QueryVersion(provider, [](DWORD major, DWORD minor) {
+            std::wcout << std::format(L"Provider's version: {}.{}\n", major, minor);
+        });
+
         EnumerateAlgorithms(provider, [](const PROV_ENUMALGS_EX& alg) {
-            std::cout << std::format(R"(Algorithm "{}" ({}))", alg.szLongName, alg.szName)
+            std::cout << std::format(R"(Algorithm identifier: 0x{:08x}; key bits: {:4}; name: "{}" ({}))",
+                             alg.aiAlgid, alg.dwDefaultLen, alg.szLongName, alg.szName)
                       << std::endl;
         });
 

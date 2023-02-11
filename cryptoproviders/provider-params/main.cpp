@@ -75,7 +75,7 @@ void EnumerateAlgorithms(HCRYPTPROV provider, const enum_algs_handler_t& handler
 
     if (!CryptGetProvParam(provider, PP_ENUMALGS_EX, alg_bytes, &size, CRYPT_FIRST))
     {
-        cas::ThrowError();
+        cas::error::ThrowLast();
     }
 
     handler(alg);
@@ -87,7 +87,7 @@ void EnumerateAlgorithms(HCRYPTPROV provider, const enum_algs_handler_t& handler
 
     if (const auto last_error = GetLastError(); ERROR_NO_MORE_ITEMS != last_error)
     {
-        cas::ThrowError(last_error);
+        cas::error::Throw(last_error);
     }
 }
 
@@ -112,7 +112,7 @@ void QueryVersion(HCRYPTPROV provider, const version_handler_t& handler)
 
     if (!CryptGetProvParam(provider, PP_VERSION, version_bytes, &size, 0))
     {
-        cas::ThrowError();
+        cas::error::ThrowLast();
     }
 
     const auto major = (version >> 8) & 0xFF;
@@ -130,7 +130,7 @@ int wmain(int argc, wchar_t** argv)
         // Set Windows-1251 codepage
         //
 
-        USE_CODEPAGE(cas::kWin1251);
+        USE_CODEPAGE(cas::utils::kWin1251);
 
         //
         // Parse options
@@ -172,7 +172,7 @@ int wmain(int argc, wchar_t** argv)
         // Open requested provider (container can be defaulted here)
         //
 
-        cas::Provider provider(provider_name, provider_type);
+        cas::crypto::Provider provider(provider_name, provider_type);
 
         //
         // Now let's enumerate some parameters, for instance

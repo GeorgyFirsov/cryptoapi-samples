@@ -53,15 +53,15 @@ static constexpr auto kTypeDescription = "type which to list providers of";
 
 
 /**
- * @brief Print an error message while enumerating provider types
+ * @brief Handes an error message while enumerating provider types
  *        (end of the types list is not an error)
  */
-void TraceEnumFailure()
+void OnEnumFailure()
 {
     if (const auto error = GetLastError();
         error != ERROR_NO_MORE_ITEMS && error != ERROR_SUCCESS)
     {
-        std::wcerr << cas::ErrorMessage(error) << std::endl;
+        cas::error::Throw(error);
     }
 }
 
@@ -74,7 +74,7 @@ int wmain(int argc, wchar_t** argv)
         // Set Windows-1251 codepage
         //
 
-        USE_CODEPAGE(cas::kWin1251);
+        USE_CODEPAGE(cas::utils::kWin1251);
 
         //
         // Parse options
@@ -117,7 +117,7 @@ int wmain(int argc, wchar_t** argv)
 
             if (!CryptEnumProviders(index, nullptr, 0, &provider_type, nullptr, &provider_name_len))
             {
-                TraceEnumFailure();
+                OnEnumFailure();
                 break;
             }
 
@@ -137,7 +137,7 @@ int wmain(int argc, wchar_t** argv)
             std::wstring provider_name(provider_name_len, 0);
             if (!CryptEnumProviders(index, nullptr, 0, &provider_type, provider_name.data(), &provider_name_len))
             {
-                TraceEnumFailure();
+                OnEnumFailure();
                 break;
             }
 

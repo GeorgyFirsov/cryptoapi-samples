@@ -66,7 +66,7 @@ int wmain(int argc, wchar_t** argv)
         // Set Windows-1251 codepage
         //
 
-        USE_CODEPAGE(cas::kWin1251);
+        USE_CODEPAGE(cas::utils::kWin1251);
 
         //
         // Parse options
@@ -112,7 +112,7 @@ int wmain(int argc, wchar_t** argv)
             // at the scope exit.
             //
 
-            cas::Provider provider(container_name, provider_name, provider_type, CRYPT_NEWKEYSET);
+            cas::crypto::Provider provider(container_name, provider_name, provider_type, CRYPT_NEWKEYSET);
 
             std::wcout << L"Container was created successfully\n";
         }
@@ -122,7 +122,7 @@ int wmain(int argc, wchar_t** argv)
             // And here we delete container, that was created earlier
             //
 
-            cas::Provider provider(container_name, provider_name, provider_type, CRYPT_DELETEKEYSET);
+            cas::crypto::Provider provider(container_name, provider_name, provider_type, CRYPT_DELETEKEYSET);
 
             std::wcout << L"Container was removed successfully\n";
         }

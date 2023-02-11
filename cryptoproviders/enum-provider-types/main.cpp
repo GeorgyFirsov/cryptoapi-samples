@@ -23,15 +23,15 @@
 
 
 /**
- * @brief Print an error message while enumerating provider types 
+ * @brief Handles an error message while enumerating provider types 
  *        (end of the types list is not an error)
  */
-void TraceEnumFailure()
+void OnEnumFailure()
 {
     if (const auto error = GetLastError();
         error != ERROR_NO_MORE_ITEMS && error != ERROR_SUCCESS)
     {
-        std::wcerr << cas::ErrorMessage(error) << std::endl;
+        cas::error::Throw(error);
     }
 }
 
@@ -44,7 +44,7 @@ int wmain()
         // Set Windows-1251 codepage
         //
 
-        USE_CODEPAGE(cas::kWin1251);
+        USE_CODEPAGE(cas::utils::kWin1251);
 
         for (DWORD index = 0; /* Intentionally empty */; ++index)
         {
@@ -57,7 +57,7 @@ int wmain()
 
             if (!CryptEnumProviderTypes(index, nullptr, 0, &provider_type, nullptr, &type_name_len))
             {
-                TraceEnumFailure();
+                OnEnumFailure();
                 break;
             }
 
@@ -68,7 +68,7 @@ int wmain()
             std::wstring type_name(type_name_len, 0);
             if (!CryptEnumProviderTypes(index, nullptr, 0, &provider_type, type_name.data(), &type_name_len))
             {
-                TraceEnumFailure();
+                OnEnumFailure();
                 break;
             }
 

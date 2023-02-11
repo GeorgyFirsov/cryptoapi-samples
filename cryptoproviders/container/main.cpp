@@ -109,7 +109,7 @@ int wmain(int argc, wchar_t** argv)
         {
             //
             // Create key container by using CRYPT_NEWKEYSET flag. Context will be released
-            // a the scope exit.
+            // at the scope exit.
             //
 
             cas::Provider provider(container_name, provider_name, provider_type, CRYPT_NEWKEYSET);

@@ -1,14 +1,22 @@
-#include "common.hpp"
+/**
+ * @file crypto.hpp
+ * @brief CryptoAPI helpers implementation
+ */
 
 
-namespace cas {
+#include "details/crypto.hpp"
+#include "details/utils.hpp"
+#include "details/error.hpp"
+
+
+namespace cas::crypto {
 
 Provider::Provider(LPCWSTR container_name, LPCWSTR provider_name, DWORD provider_type, DWORD flags /* = 0 */)
     : provider_(0)
 {
     if (!CryptAcquireContext(&provider_, container_name, provider_name, provider_type, flags))
     {
-        ThrowError();
+        error::ThrowLast();
     }
 
     if (FLAG_ON(CRYPT_DELETEKEYSET, flags))
@@ -47,4 +55,4 @@ void Provider::Clear() noexcept
     }
 }
 
-}  // namespace cas
+}  // namespace cas::crypto

@@ -14,6 +14,7 @@ set(CAS_ROOT			${CMAKE_SOURCE_DIR})
 set(CAS_COMMON			${CAS_ROOT}/common)
 set(CAS_COMMON_INCLUDE	${CAS_COMMON}/include)
 set(CAS_CRYPTOPROVIDERS	${CAS_ROOT}/cryptoproviders)
+set(CAS_SECURE_CHANNEL	${CAS_ROOT}/secure-channel)
 
 #
 # Generic include directories
@@ -32,3 +33,4 @@ add_compile_definitions(UNICODE)  # Build with unicode characters (wchar_t)
 #
 add_subdirectory(common)
 add_subdirectory(cryptoproviders)
+add_subdirectory(secure-channel)

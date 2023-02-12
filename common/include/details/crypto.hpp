@@ -130,7 +130,7 @@ public:
     }
 
     /**
-     * @brief 
+     * @brief Obtains the allocator to use after copying a standard container.
      */
     erasing_adaptor select_on_container_copy_construction() const
     {

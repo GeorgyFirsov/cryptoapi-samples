@@ -9,14 +9,11 @@ set(CAS_COMMON_DETAILS_SRC	${CAS_COMMON_SOURCE_ROOT}/details)
 #
 # Sources and headers
 #
-set(CAS_COMMON_SOURCE_FILES	${CAS_COMMON_DETAILS_SRC}/crypto.cpp
-							${CAS_COMMON_DETAILS_SRC}/network.cpp
-							${CAS_COMMON_DETAILS_SRC}/utils.cpp)
+set(CAS_COMMON_SOURCE_FILES	${CAS_COMMON_DETAILS_SRC}/crypto.cpp)
 
 set(CAS_COMMON_HEADER_FILES	${CAS_COMMON_INCLUDE_ROOT}/common.hpp
 							${CAS_COMMON_DETAILS_INC}/crypto.hpp
 							${CAS_COMMON_DETAILS_INC}/error.hpp
-							${CAS_COMMON_DETAILS_INC}/network.hpp
 							${CAS_COMMON_DETAILS_INC}/utils.hpp)
 
 set(CAS_COMMON_SOURCES		${CAS_COMMON_SOURCE_FILES}

@@ -92,7 +92,8 @@ public:
         if (p)
         {
             //
-            //
+            // That's the purpose of this adaptor!
+            // Erase memory before deallocation
             //
 
             const auto n_bytes = n * sizeof(value_type);

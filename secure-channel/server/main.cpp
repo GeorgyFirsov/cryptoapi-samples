@@ -124,28 +124,30 @@ int wmain(int argc, wchar_t** argv)
         // Receive and import exchange public key
         //
 
-        unsigned int priority                                 = 0;
-        message_queue::size_type received_size                = 0;
-        sc::proto::PublicKeyHeaderMessage exchange_key_header = {};
+        unsigned int priority                  = 0;
+        message_queue::size_type received_size = 0;
+        cas::crypto::sec_vector<unsigned char> receive_buffer(sc::proto::kMaxMessageSize, 0);
 
-        queue->receive(&exchange_key_header, sizeof(exchange_key_header), received_size, priority);
-        if (received_size != sizeof(exchange_key_header) ||
-            exchange_key_header.header.signature != sc::proto::kPublicKeyHeaderSignature)
+        queue->receive(receive_buffer.data(), receive_buffer.size(), received_size, priority);
+        const auto exchange_key_header = reinterpret_cast<sc::proto::PublicKeyHeaderMessage*>(
+            receive_buffer.data());
+
+        if (received_size != sizeof(sc::proto::PublicKeyHeaderMessage) ||
+            exchange_key_header->header.signature != sc::proto::kPublicKeyHeaderSignature)
         {
             cas::error::Throw(ERROR_INVALID_DATA);
         }
 
-        std::vector<unsigned char> exchange_key_buffer(exchange_key_header.size, 0);
+        const auto keys_size = exchange_key_header->size;
 
-        queue->receive(exchange_key_buffer.data(), exchange_key_buffer.size(), received_size, priority);
-        if (received_size != exchange_key_buffer.size())
+        queue->receive(receive_buffer.data(), receive_buffer.size(), received_size, priority);
+        if (received_size != keys_size)
         {
             cas::error::Throw(ERROR_INVALID_DATA);
         }
 
         cas::crypto::Provider exchange_provider(PROV_RSA_FULL);
-        cas::crypto::Key exchange_key(exchange_provider, exchange_key_buffer.data(),
-            static_cast<DWORD>(exchange_key_buffer.size()));
+        cas::crypto::Key exchange_key(exchange_provider, receive_buffer.data(), received_size);
 
         //
         // Export symmetric key using exchange key

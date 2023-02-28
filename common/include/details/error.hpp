@@ -16,8 +16,10 @@
 // STL headers
 //
 
+#include <format>
 #include <string>
 #include <stdexcept>
+#include <source_location>
 
 
 namespace cas::error {
@@ -90,18 +92,21 @@ String ErrorMessage(DWORD error_code) noexcept
  * * 
  * @param error_code Error code to provide description of
  */
-[[noreturn]] inline void Throw(DWORD error_code)
+[[noreturn]] inline void Throw(DWORD error_code, std::source_location loc = std::source_location::current())
 {
-    throw std::runtime_error(ErrorMessage<std::string>(error_code));
+    const auto error_message = std::format("Error in '{}' at '{}:{}'.\nDescription: {}",
+        loc.function_name(), loc.file_name(), loc.line(), ErrorMessage<std::string>(error_code));
+
+    throw std::runtime_error(error_message);
 }
 
 
 /**
  * @brief Throws a std::runtime_error instance with last error code description.
  */
-[[noreturn]] inline void ThrowLast()
+[[noreturn]] inline void ThrowLast(std::source_location loc = std::source_location::current())
 {
-    Throw(GetLastError());
+    Throw(GetLastError(), loc);
 }
 
 }  // namespace cas::error

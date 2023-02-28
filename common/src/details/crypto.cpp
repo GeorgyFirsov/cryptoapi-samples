@@ -145,4 +145,29 @@ sec_vector<unsigned char> Key::Export(HCRYPTKEY export_key, DWORD type)
     return buffer;
 }
 
+
+Hash::Hash(HCRYPTPROV provider, ALG_ID algid, HCRYPTKEY key /* = 0 */, DWORD flags /* = 0 */)
+    : hash_(0)
+{
+    if (!CryptCreateHash(provider, algid, key, flags, &hash_))
+    {
+        error::ThrowLast();
+    }
+}
+
+
+Hash::~Hash()
+{
+    Clear();
+}
+
+
+void Hash::Clear() noexcept
+{
+    if (hash_)
+    {
+        CryptDestroyHash(std::exchange(hash_, 0));
+    }
+}
+
 }  // namespace cas::crypto

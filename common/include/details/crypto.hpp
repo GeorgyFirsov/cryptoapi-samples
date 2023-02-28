@@ -220,13 +220,12 @@ public:
     void Clear() noexcept;
 
     /**
-     * @brief Get the internal provider handle.
+     * @brief Get the internal key handle.
      */
     operator HCRYPTPROV() const noexcept { return provider_; }
 
 private:
-    // Internal provider handle
-    HCRYPTPROV provider_;
+    HCRYPTPROV provider_; /**< Internal provider handle */
 };
 
 
@@ -282,8 +281,44 @@ public:
     operator HCRYPTKEY() const noexcept { return key_; }
 
 private:
-    // Internal key descriptor
-    HCRYPTKEY key_;
+    HCRYPTKEY key_; /**< Internal key descriptor */
+};
+
+
+/**
+ * @brief Wrapper over HCRYPTHASH. Destroys handle at a scope exit.
+ */
+class Hash final
+{
+    Hash(const Hash&)            = delete;
+    Hash& operator=(const Hash&) = delete;
+
+    Hash(Hash&&)            = delete;
+    Hash& operator=(Hash&&) = delete;
+
+public:
+    /**
+     * @brief Constructor. Creates hash by calling CryptCreateHash.
+     */
+    explicit Hash(HCRYPTPROV provider, ALG_ID algid, HCRYPTKEY key = 0, DWORD flags = 0);
+
+    /**
+     * @brief Destructor. Just calls cas::Hash::Clear.
+     */
+    ~Hash();
+
+    /**
+     * @brief Frees a wrapped hash.
+     */
+    void Clear() noexcept;
+
+    /**
+     * @brief Get the internal hash handle.
+     */
+    operator HCRYPTHASH() const noexcept { return hash_; }
+
+private:
+    HCRYPTHASH hash_; /**< Internal hash descriptor */
 };
 
 }  // namespace cas::crypto

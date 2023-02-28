@@ -36,6 +36,7 @@
 //
 
 #include "common.hpp"
+#include "utils.hpp"
 #include "protocol.hpp"
 
 
@@ -73,18 +74,8 @@ int wmain(int argc, wchar_t** argv)
         // Export exchange public key and sent to the server
         //
 
-        DWORD buffer_size = 0;
-        exchange_key.Export(PUBLICKEYBLOB, nullptr, buffer_size);
-
-        cas::crypto::sec_vector<unsigned char> exchange_key_buffer(buffer_size, 0);
-        exchange_key.Export(PUBLICKEYBLOB, exchange_key_buffer.data(), buffer_size);
-
-        sc::proto::PublicKeyHeaderMessage exchange_key_header = {};
-        exchange_key_header.header.signature                  = sc::proto::kPublicKeyHeaderSignature;
-        exchange_key_header.size                              = buffer_size;
-
-        queue.send(&exchange_key_header, sizeof(exchange_key_header), sc::proto::kMessagePriority);
-        queue.send(exchange_key_buffer.data(), exchange_key_buffer.size(), sc::proto::kMessagePriority);
+        const auto exchange_key_buffer = exchange_key.Export(PUBLICKEYBLOB);
+        sc::utils::SendMessage<sc::proto::PublicKey>(queue, exchange_key_buffer);
 
         return 0;
     }

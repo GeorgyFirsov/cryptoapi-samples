@@ -36,6 +36,7 @@
 //
 
 #include "common.hpp"
+#include "utils.hpp"
 #include "protocol.hpp"
 
 
@@ -84,6 +85,11 @@ public:
      */
     queue_t* operator->() noexcept { return &queue_; }
 
+    /**
+     * 
+     */
+    operator queue_t&() noexcept { return queue_; }
+
 private:
     // Queue itself
     queue_t queue_;
@@ -124,47 +130,17 @@ int wmain(int argc, wchar_t** argv)
         // Receive and import exchange public key
         //
 
-        unsigned int priority                  = 0;
-        message_queue::size_type received_size = 0;
-        cas::crypto::sec_vector<unsigned char> receive_buffer(sc::proto::kMaxMessageSize, 0);
-
-        queue->receive(receive_buffer.data(), receive_buffer.size(), received_size, priority);
-        const auto exchange_key_header = reinterpret_cast<sc::proto::PublicKeyHeaderMessage*>(
-            receive_buffer.data());
-
-        if (received_size != sizeof(sc::proto::PublicKeyHeaderMessage) ||
-            exchange_key_header->header.signature != sc::proto::kPublicKeyHeaderSignature)
-        {
-            cas::error::Throw(ERROR_INVALID_DATA);
-        }
-
-        const auto keys_size = exchange_key_header->size;
-
-        queue->receive(receive_buffer.data(), receive_buffer.size(), received_size, priority);
-        if (received_size != keys_size)
-        {
-            cas::error::Throw(ERROR_INVALID_DATA);
-        }
+        const auto exchange_key_buffer = sc::utils::ReceiveMessage<sc::proto::PublicKey>(queue);
 
         cas::crypto::Provider exchange_provider(PROV_RSA_FULL);
-        cas::crypto::Key exchange_key(exchange_provider, receive_buffer.data(), received_size);
+        cas::crypto::Key exchange_key(exchange_provider, exchange_key_buffer.data(), exchange_key_buffer.size());
 
         //
         // Export symmetric key using exchange key
         //
 
-        DWORD buffer_size = 0;
-        session_key.Export(exchange_key, PLAINTEXTKEYBLOB, nullptr, buffer_size);
-
-        cas::crypto::sec_vector<unsigned char> session_key_buffer(buffer_size, 0);
-        session_key.Export(exchange_key, PLAINTEXTKEYBLOB, session_key_buffer.data(), buffer_size);
-
-        sc::proto::SymmetricKeyHeaderMessage session_key_header = {};
-        session_key_header.header.signature                     = sc::proto::kSymmetricKeyHeaderSignature;
-        session_key_header.size                                 = buffer_size;
-
-        queue->send(&session_key_header, sizeof(session_key_header), sc::proto::kMessagePriority);
-        queue->send(session_key_buffer.data(), session_key_buffer.size(), sc::proto::kMessagePriority);
+        const auto session_key_buffer = session_key.Export(exchange_key, PLAINTEXTKEYBLOB);
+        sc::utils::SendMessage<sc::proto::SymmetricKey>(queue, session_key_buffer);
 
         return 0;
     }

@@ -8,7 +8,7 @@ find_package(Boost REQUIRED)
 #
 set(CAS_SC_CLIENT_ROOT			${CAS_SECURE_CHANNEL}/client)
 set(CAS_SC_CLIENT_INCLUDE_DIRS	${Boost_INCLUDE_DIR}
-								${CAS_SC_PROTOCOL_INCLUDE})
+								${CAS_SC_COMMON_INCLUDE})
 
 #
 # Sources and headers

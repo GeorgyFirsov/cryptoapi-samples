@@ -5,7 +5,16 @@
 
 #pragma once
 
+#include "common.hpp"
+
+
 namespace sc::proto {
+
+/**
+ * 
+ */
+using sec_bytes = cas::crypto::sec_vector<unsigned char>;
+
 
 /**
  * 
@@ -37,6 +46,7 @@ inline constexpr auto kMessagePriority = 1;
 struct MessageHeader
 {
     unsigned long signature; /**<  */
+    unsigned long size;      /**< */
 };
 
 
@@ -45,13 +55,13 @@ struct MessageHeader
  */
 inline constexpr unsigned long kPublicKeyHeaderSignature = 0xCAFEBABE;
 
+
 /**
  * 
  */
-struct PublicKeyHeaderMessage
+struct PublicKey
 {
-    MessageHeader header; /**<  */
-    unsigned long size;   /**<  */
+    static constexpr unsigned long kSignature = kPublicKeyHeaderSignature;
 };
 
 
@@ -63,10 +73,9 @@ inline constexpr unsigned long kSymmetricKeyHeaderSignature = 0xDEADBEEF;
 /**
  * 
  */
-struct SymmetricKeyHeaderMessage
+struct SymmetricKey
 {
-    MessageHeader header; /**<  */
-    unsigned long size;   /**<  */
+    static constexpr unsigned long kSignature = kSymmetricKeyHeaderSignature;
 };
 
 }  // namespace sc::proto

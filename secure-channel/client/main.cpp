@@ -84,7 +84,7 @@ int wmain(int argc, wchar_t** argv)
         const auto session_key_buffer = sc::utils::ReceiveMessage<sc::proto::SymmetricKey>(queue);
 
 		cas::crypto::Provider symmetric_provider(PROV_RSA_AES);
-        cas::crypto::Key session_key(symmetric_provider, session_key_buffer);
+        cas::crypto::Key session_key(symmetric_provider, session_key_buffer, exchange_key);
 
         //
         // Receive and import signature verification key

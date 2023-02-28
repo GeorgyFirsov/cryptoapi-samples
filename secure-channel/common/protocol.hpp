@@ -11,47 +11,47 @@
 namespace sc::proto {
 
 /**
- * 
+ * @brief Type of secure buffer with bytes.
  */
 using sec_bytes = cas::crypto::sec_vector<unsigned char>;
 
 
 /**
- * 
+ * @brief Shared message queue name.
  */
 inline constexpr auto kQueueName = "secure-channel-queue";
 
 
 /**
- * 
+ * @brief Maximum message queue size.
  */
 inline constexpr auto kMaxMessageNumber = 1024;
 
 
 /**
- * 
+ * @brief Maximum message size.
  */
 inline constexpr auto kMaxMessageSize = 4096;
 
 
 /**
- * 
+ * @brief Messages' priority.
  */
 inline constexpr auto kMessagePriority = 1;
 
 
 /**
- *
+ * @brief Header of each message.
  */
 struct MessageHeader
 {
-    unsigned long signature; /**<  */
-    unsigned long size;      /**< */
+    unsigned long signature; /**< Signature to verify integrity */
+    unsigned long size;      /**< Size of payload followed in subsequent message */
 };
 
 
 /**
- * 
+ * @brief Traits for public key message.
  */
 struct PublicKey
 {
@@ -60,7 +60,7 @@ struct PublicKey
 
 
 /**
- * 
+ * @brief Traits for symmetric key message.
  */
 struct SymmetricKey
 {

@@ -67,4 +67,13 @@ struct SymmetricKey
     static constexpr unsigned long kSignature = 0xDEADBEEF;
 };
 
+
+/**
+ * @brief Traits for simple pyload.
+ */
+struct Payload
+{
+    static constexpr unsigned long kSignature = 0XBADF00D;
+};
+
 }  // namespace sc::proto

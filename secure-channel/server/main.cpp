@@ -97,6 +97,16 @@ private:
 };
 
 
+/**
+ * @brief Receives a client's PID and returns it.
+ */
+DWORD GetClientPid(ipc::message_queue& queue)
+{
+    const auto raw_pid = sc::utils::ReceiveMessage<sc::proto::Payload>(queue);
+    return *reinterpret_cast<const DWORD*>(raw_pid.data());
+}
+
+
 int wmain(int argc, wchar_t** argv)
 {
     try
@@ -113,6 +123,12 @@ int wmain(int argc, wchar_t** argv)
 
         message_queue queue(sc::proto::kQueueName,
             sc::proto::kMaxMessageNumber, sc::proto::kMaxMessageSize);
+
+        //
+        // Wait for client connection and open its process handle
+        //
+
+        cas::utils::Process client(GetClientPid(queue));
 
         //
         // Create a signature key pair and symmetric session key
@@ -146,6 +162,12 @@ int wmain(int argc, wchar_t** argv)
 
         const auto signature_key_buffer = signature_key.Export(PUBLICKEYBLOB);
         sc::utils::SendMessage<sc::proto::PublicKey>(queue, signature_key_buffer);
+
+        //
+        // Wait until client process ends to close message queue safe.
+        //
+
+        client.Wait();
 
         return 0;
     }

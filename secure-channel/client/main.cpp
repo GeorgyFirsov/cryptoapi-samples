@@ -47,6 +47,22 @@
 namespace ipc = boost::interprocess;
 
 
+/**
+ * @brief Initiates a connection with a server using message queue.
+ */
+void InitiateConnection(ipc::message_queue& queue)
+{
+    //
+    // Just send current process identifier to server.
+    //
+
+    sc::proto::sec_bytes pid_buffer(sizeof(DWORD), 0);
+    *reinterpret_cast<DWORD*>(pid_buffer.data()) = GetCurrentProcessId();
+
+    sc::utils::SendMessage<sc::proto::Payload>(queue, pid_buffer);
+}
+
+
 int wmain(int argc, wchar_t** argv)
 {
     try
@@ -64,6 +80,12 @@ int wmain(int argc, wchar_t** argv)
         ipc::message_queue queue(ipc::open_only, sc::proto::kQueueName);
 
         //
+        // Initiate connection with server
+        //
+
+        InitiateConnection(queue);
+
+        //
         // Generate exchange key pair
         //
 
@@ -79,20 +101,20 @@ int wmain(int argc, wchar_t** argv)
 
         //
         // Receive and import session key
-        // 
+        //
 
         const auto session_key_buffer = sc::utils::ReceiveMessage<sc::proto::SymmetricKey>(queue);
 
-		cas::crypto::Provider symmetric_provider(PROV_RSA_AES);
+        cas::crypto::Provider symmetric_provider(PROV_RSA_AES);
         cas::crypto::Key session_key(symmetric_provider, session_key_buffer, exchange_key);
 
         //
         // Receive and import signature verification key
-        // 
-        
+        //
+
         const auto signature_key_buffer = sc::utils::ReceiveMessage<sc::proto::PublicKey>(queue);
 
-		cas::crypto::Provider signature_provider(PROV_RSA_AES);
+        cas::crypto::Provider signature_provider(PROV_RSA_AES);
         cas::crypto::Key signature_key(signature_provider, signature_key_buffer);
 
         return 0;

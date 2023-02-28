@@ -269,12 +269,12 @@ public:
     /**
      * @brief Exports wrapped key into a buffer.
      */
-    void Export(DWORD type, LPVOID buffer, DWORD& buffer_size);
+    sec_vector<unsigned char> Export(DWORD type);
 
     /**
      * @brief Exports wrapped key into a buffer using export key.
      */
-    void Export(HCRYPTKEY export_key, DWORD type, LPVOID buffer, DWORD& buffer_size);
+    sec_vector<unsigned char> Export(HCRYPTKEY export_key, DWORD type);
 
     /**
      * @brief Get the internal key handle.

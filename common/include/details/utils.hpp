@@ -10,7 +10,6 @@
 //
 
 #include "details/windows.hpp"
-#include <atlsync.h>
 
 
 namespace cas::utils {

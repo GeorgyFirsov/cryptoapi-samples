@@ -122,18 +122,27 @@ void Key::Clear() noexcept
 }
 
 
-void Key::Export(DWORD type, LPVOID buffer, DWORD& buffer_size)
+sec_vector<unsigned char> Key::Export(DWORD type)
 {
-    return Export(0, type, buffer, buffer_size);
+    return Export(0, type);
 }
 
 
-void Key::Export(HCRYPTKEY export_key, DWORD type, LPVOID buffer, DWORD& buffer_size)
+sec_vector<unsigned char> Key::Export(HCRYPTKEY export_key, DWORD type)
 {
-    if (!CryptExportKey(key_, export_key, type, CRYPT_BLOB_VER3, static_cast<BYTE*>(buffer), &buffer_size))
+    DWORD buffer_size = 0;
+    if (!CryptExportKey(key_, export_key, type, CRYPT_BLOB_VER3, nullptr, &buffer_size))
     {
         error::ThrowLast();
     }
+
+    sec_vector<unsigned char> buffer(buffer_size, 0);
+    if (!CryptExportKey(key_, export_key, type, CRYPT_BLOB_VER3, buffer.data(), &buffer_size))
+    {
+        error::ThrowLast();
+    }
+
+    return buffer;
 }
 
 }  // namespace cas::crypto

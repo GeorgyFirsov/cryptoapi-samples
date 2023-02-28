@@ -53,29 +53,18 @@ struct MessageHeader
 /**
  * 
  */
-inline constexpr unsigned long kPublicKeyHeaderSignature = 0xCAFEBABE;
-
-
-/**
- * 
- */
 struct PublicKey
 {
-    static constexpr unsigned long kSignature = kPublicKeyHeaderSignature;
+    static constexpr unsigned long kSignature = 0xCAFEBABE;
 };
 
 
 /**
  * 
  */
-inline constexpr unsigned long kSymmetricKeyHeaderSignature = 0xDEADBEEF;
-
-/**
- * 
- */
 struct SymmetricKey
 {
-    static constexpr unsigned long kSignature = kSymmetricKeyHeaderSignature;
+    static constexpr unsigned long kSignature = 0xDEADBEEF;
 };
 
 }  // namespace sc::proto

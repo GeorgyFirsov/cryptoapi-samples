@@ -276,6 +276,11 @@ public:
     sec_vector<unsigned char> Export(HCRYPTKEY export_key, DWORD type);
 
     /**
+     * @brief Sets a key parameter.
+     */
+    void SetParameter(DWORD parameter, const void* data, DWORD flags = 0);
+
+    /**
      * @brief Get the internal key handle.
      */
     operator HCRYPTKEY() const noexcept { return key_; }

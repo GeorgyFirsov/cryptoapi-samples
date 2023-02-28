@@ -131,18 +131,27 @@ sec_vector<unsigned char> Key::Export(DWORD type)
 sec_vector<unsigned char> Key::Export(HCRYPTKEY export_key, DWORD type)
 {
     DWORD buffer_size = 0;
-    if (!CryptExportKey(key_, export_key, type, CRYPT_BLOB_VER3, nullptr, &buffer_size))
+    if (!CryptExportKey(key_, export_key, type, 0, nullptr, &buffer_size))
     {
         error::ThrowLast();
     }
 
     sec_vector<unsigned char> buffer(buffer_size, 0);
-    if (!CryptExportKey(key_, export_key, type, CRYPT_BLOB_VER3, buffer.data(), &buffer_size))
+    if (!CryptExportKey(key_, export_key, type, 0, buffer.data(), &buffer_size))
     {
         error::ThrowLast();
     }
 
     return buffer;
+}
+
+
+void Key::SetParameter(DWORD parameter, const void* data, DWORD flags /* = 0 */)
+{
+    if (!CryptSetKeyParam(key_, parameter, static_cast<const BYTE*>(data), flags))
+    {
+        error::ThrowLast();
+    }
 }
 
 

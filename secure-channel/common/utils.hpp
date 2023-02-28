@@ -42,7 +42,7 @@ sc::proto::sec_bytes ReceiveMessage(boost::interprocess::message_queue& queue)
         cas::error::Throw(ERROR_INVALID_DATA);
     }
 
-    const auto data_size = received_size;
+    const auto data_size = exchange_key_header->size;
 
     queue.receive(buffer.data(), buffer.size(), received_size, priority);
     if (received_size != data_size)

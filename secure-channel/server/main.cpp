@@ -128,7 +128,11 @@ int wmain(int argc, wchar_t** argv)
         // Wait for client connection and open its process handle
         //
 
+        std::wcout << L"Waiting for connections...\n";
+
         cas::utils::Process client(GetClientPid(queue));
+
+        std::wcout << L"New connection received\n";
 
         //
         // Create a signature key pair and symmetric session key
@@ -140,6 +144,8 @@ int wmain(int argc, wchar_t** argv)
         cas::crypto::Provider symmetric_provider(PROV_RSA_AES);
         cas::crypto::Key session_key(symmetric_provider, CALG_AES_256);
 
+        std::wcout << L"Signature key pair and symmetric session keys created successfully\n";
+
         //
         // Receive and import exchange public key
         //
@@ -149,12 +155,16 @@ int wmain(int argc, wchar_t** argv)
         cas::crypto::Provider exchange_provider(PROV_RSA_AES);
         cas::crypto::Key exchange_key(exchange_provider, exchange_key_buffer);
 
+        std::wcout << L"Exchange key received and imported successfully\n";
+
         //
         // Export symmetric key using exchange key and send to client
         //
 
         const auto session_key_buffer = session_key.Export(exchange_key, PLAINTEXTKEYBLOB);
         sc::utils::SendMessage<sc::proto::SymmetricKey>(queue, session_key_buffer);
+
+        std::wcout << L"Symmetric session key sent to client successfully\n";
 
         //
         // Export signature verification key and send to client too
@@ -163,9 +173,13 @@ int wmain(int argc, wchar_t** argv)
         const auto signature_key_buffer = signature_key.Export(PUBLICKEYBLOB);
         sc::utils::SendMessage<sc::proto::PublicKey>(queue, signature_key_buffer);
 
+        std::wcout << L"Signature key sent to client successfully\n";
+
         //
         // Wait until client process ends to close message queue safe.
         //
+
+        std::wcout << L"Waiting for client process to end...\n";
 
         client.Wait();
 

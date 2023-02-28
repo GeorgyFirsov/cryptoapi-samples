@@ -85,6 +85,8 @@ int wmain(int argc, wchar_t** argv)
 
         InitiateConnection(queue);
 
+        std::wcout << L"Connection request sent\n";
+
         //
         // Generate exchange key pair
         //
@@ -92,12 +94,16 @@ int wmain(int argc, wchar_t** argv)
         cas::crypto::Provider exchange_provider(PROV_RSA_AES);
         cas::crypto::Key exchange_key(exchange_provider, CALG_RSA_KEYX);
 
+        std::wcout << L"Exchange key generated successfully\n";
+
         //
         // Export exchange public key and sent to the server
         //
 
         const auto exchange_key_buffer = exchange_key.Export(PUBLICKEYBLOB);
         sc::utils::SendMessage<sc::proto::PublicKey>(queue, exchange_key_buffer);
+
+        std::wcout << L"Exchange public key sent successfully\n";
 
         //
         // Receive and import session key
@@ -108,6 +114,8 @@ int wmain(int argc, wchar_t** argv)
         cas::crypto::Provider symmetric_provider(PROV_RSA_AES);
         cas::crypto::Key session_key(symmetric_provider, session_key_buffer, exchange_key);
 
+        std::wcout << L"Session key received and imported successfully\n";
+
         //
         // Receive and import signature verification key
         //
@@ -116,6 +124,8 @@ int wmain(int argc, wchar_t** argv)
 
         cas::crypto::Provider signature_provider(PROV_RSA_AES);
         cas::crypto::Key signature_key(signature_provider, signature_key_buffer);
+
+        std::wcout << L"Signature verification key received and imported successfully\n";
 
         return 0;
     }

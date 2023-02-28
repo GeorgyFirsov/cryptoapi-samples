@@ -48,24 +48,25 @@ namespace ipc = boost::interprocess;
 
 
 /**
- * 
+ * @brief Message queue wrapper for automatic destruction of 
+ *        internal boost queue.
  */
 class message_queue final
 {
 public:
     /**
-     * 
+     * @brief Internal queue type.
      */
     using queue_t = ipc::message_queue;
 
     /**
-     * 
+     * @brief Type, that represents size-related quantities.
      */
     using size_type = queue_t::size_type;
 
 public:
     /**
-     * 
+     * @brief Constructor. Creates a named queue.
      */
     explicit message_queue(const char* name, size_type max_number, size_type max_size)
         : queue_(ipc::create_only, name, max_number, max_size)
@@ -73,7 +74,7 @@ public:
     { }
 
     /**
-     * 
+     * @brief Destructor. Destroys the queue.
      */
     ~message_queue()
     {
@@ -81,21 +82,18 @@ public:
     }
 
     /**
-     * 
+     * @brief Operator for "transparent" queue interaction.
      */
     queue_t* operator->() noexcept { return &queue_; }
 
     /**
-     * 
+     * @brief Operator for implicit type casting.
      */
     operator queue_t&() noexcept { return queue_; }
 
 private:
-    // Queue itself
-    queue_t queue_;
-
-    // Queue name
-    std::string name_;
+    queue_t queue_;    /**< Queue itself */
+    std::string name_; /**< Queue name */
 };
 
 
@@ -144,7 +142,7 @@ int wmain(int argc, wchar_t** argv)
 
         //
         // Export signature verification key and send to client too
-        // 
+        //
 
         const auto signature_key_buffer = signature_key.Export(PUBLICKEYBLOB);
         sc::utils::SendMessage<sc::proto::PublicKey>(queue, signature_key_buffer);

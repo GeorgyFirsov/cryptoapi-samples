@@ -71,10 +71,10 @@ Key::Key(HCRYPTPROV provider, ALG_ID algorithm, DWORD flags /* = 0 */)
 }
 
 
-Key::Key(HCRYPTPROV provider, LPCVOID buffer, DWORD buffer_size, HCRYPTKEY public_key /* = 0 */, DWORD flags /* = 0 */)
+Key::Key(HCRYPTPROV provider, const sec_vector<unsigned char>& buffer, HCRYPTKEY public_key /* = 0 */, DWORD flags /* = 0 */)
     : key_(0)
 {
-    if (!CryptImportKey(provider, static_cast<const BYTE*>(buffer), buffer_size, public_key, flags, &key_))
+    if (!CryptImportKey(provider, buffer.data(), static_cast<DWORD>(buffer.size()), public_key, flags, &key_))
     {
         error::ThrowLast();
     }

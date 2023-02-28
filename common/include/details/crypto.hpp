@@ -244,7 +244,7 @@ public:
     /**
      * @brief Imports a key from buffer.
      */
-    explicit Key(HCRYPTPROV provider, LPCVOID buffer, DWORD buffer_size, HCRYPTKEY public_key = 0, DWORD flags = 0);
+    explicit Key(HCRYPTPROV provider, const sec_vector<unsigned char>& buffer, HCRYPTKEY public_key = 0, DWORD flags = 0);
 
     /**
      * @brief Destructor. Just calls cas::Key::Clear.

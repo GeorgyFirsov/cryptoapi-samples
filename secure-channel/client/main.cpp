@@ -77,6 +77,24 @@ int wmain(int argc, wchar_t** argv)
         const auto exchange_key_buffer = exchange_key.Export(PUBLICKEYBLOB);
         sc::utils::SendMessage<sc::proto::PublicKey>(queue, exchange_key_buffer);
 
+        //
+        // Receive and import session key
+        // 
+
+        const auto session_key_buffer = sc::utils::ReceiveMessage<sc::proto::SymmetricKey>(queue);
+
+		cas::crypto::Provider symmetric_provider(PROV_RSA_AES);
+        cas::crypto::Key session_key(symmetric_provider, session_key_buffer);
+
+        //
+        // Receive and import signature verification key
+        // 
+        
+        const auto signature_key_buffer = sc::utils::ReceiveMessage<sc::proto::PublicKey>(queue);
+
+		cas::crypto::Provider signature_provider(PROV_RSA_AES);
+        cas::crypto::Key signature_key(signature_provider, signature_key_buffer);
+
         return 0;
     }
     catch (const std::exception& error)

@@ -133,14 +133,21 @@ int wmain(int argc, wchar_t** argv)
         const auto exchange_key_buffer = sc::utils::ReceiveMessage<sc::proto::PublicKey>(queue);
 
         cas::crypto::Provider exchange_provider(PROV_RSA_AES);
-        cas::crypto::Key exchange_key(exchange_provider, exchange_key_buffer.data(), exchange_key_buffer.size());
+        cas::crypto::Key exchange_key(exchange_provider, exchange_key_buffer);
 
         //
-        // Export symmetric key using exchange key
+        // Export symmetric key using exchange key and send to client
         //
 
         const auto session_key_buffer = session_key.Export(exchange_key, PLAINTEXTKEYBLOB);
         sc::utils::SendMessage<sc::proto::SymmetricKey>(queue, session_key_buffer);
+
+        //
+        // Export signature verification key and send to client too
+        // 
+
+        const auto signature_key_buffer = signature_key.Export(PUBLICKEYBLOB);
+        sc::utils::SendMessage<sc::proto::PublicKey>(queue, signature_key_buffer);
 
         return 0;
     }

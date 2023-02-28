@@ -120,8 +120,8 @@ int wmain(int argc, wchar_t** argv)
         // Create a signature key pair and symmetric session key
         //
 
-        cas::crypto::Provider signature_provider(PROV_DSS);
-        cas::crypto::Key signature_key(signature_provider, CALG_DSS_SIGN);
+        cas::crypto::Provider signature_provider(PROV_RSA_AES);
+        cas::crypto::Key signature_key(signature_provider, CALG_RSA_SIGN);
 
         cas::crypto::Provider symmetric_provider(PROV_RSA_AES);
         cas::crypto::Key session_key(symmetric_provider, CALG_AES_256);
@@ -132,7 +132,7 @@ int wmain(int argc, wchar_t** argv)
 
         const auto exchange_key_buffer = sc::utils::ReceiveMessage<sc::proto::PublicKey>(queue);
 
-        cas::crypto::Provider exchange_provider(PROV_RSA_FULL);
+        cas::crypto::Provider exchange_provider(PROV_RSA_AES);
         cas::crypto::Key exchange_key(exchange_provider, exchange_key_buffer.data(), exchange_key_buffer.size());
 
         //

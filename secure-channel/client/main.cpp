@@ -67,7 +67,7 @@ int wmain(int argc, wchar_t** argv)
         // Generate exchange key pair
         //
 
-        cas::crypto::Provider exchange_provider(PROV_RSA_FULL);
+        cas::crypto::Provider exchange_provider(PROV_RSA_AES);
         cas::crypto::Key exchange_key(exchange_provider, CALG_RSA_KEYX);
 
         //

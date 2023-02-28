@@ -1,5 +1,6 @@
 /**
- * 
+ * @file utils.hpp
+ * @brief Helper functions.
  */
 
 #pragma once
@@ -18,25 +19,19 @@
 #include "protocol.hpp"
 
 
-//
-// Just for simplicity
-//
-
-namespace ipc = boost::interprocess;
-
-
 namespace sc::utils {
 
 /**
- * 
+ * @brief Receive a message from queue (synchronous operation).
+ *        Message type is determined by traits.
  */
 template<typename Traits>
-sc::proto::sec_bytes ReceiveMessage(ipc::message_queue& queue)
+sc::proto::sec_bytes ReceiveMessage(boost::interprocess::message_queue& queue)
 {
     constexpr auto kSignature = Traits::kSignature;
 
-    unsigned int priority                       = 0;
-    ipc::message_queue::size_type received_size = 0;
+    unsigned int priority                                       = 0;
+    boost::interprocess::message_queue::size_type received_size = 0;
     sc::proto::sec_bytes buffer(sc::proto::kMaxMessageSize, 0);
 
     queue.receive(buffer.data(), buffer.size(), received_size, priority);
@@ -61,10 +56,10 @@ sc::proto::sec_bytes ReceiveMessage(ipc::message_queue& queue)
 
 
 /**
- * 
+ * @brief Send message into message queue. Message type is determined by traits.
  */
 template<typename Traits>
-void SendMessage(ipc::message_queue& queue, const sc::proto::sec_bytes& buffer)
+void SendMessage(boost::interprocess::message_queue& queue, const sc::proto::sec_bytes& buffer)
 {
     constexpr auto kSignature = Traits::kSignature;
 

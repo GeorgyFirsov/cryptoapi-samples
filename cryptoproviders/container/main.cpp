@@ -1,16 +1,8 @@
 //
-// Configuration macros
-//
-
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-
-
-//
 // Windows headers
 //
 
-#include <windows.h>
+#include "windows.hpp"
 #include <wincrypt.h>
 
 

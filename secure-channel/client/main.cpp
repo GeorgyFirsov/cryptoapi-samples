@@ -22,6 +22,7 @@
 
 #include "common.hpp"
 #include "pipe.hpp"
+#include "utils.hpp"
 #include "protocol.hpp"
 
 
@@ -101,6 +102,21 @@ int wmain(int argc, wchar_t** argv)
         cas::crypto::Key signature_key(provider, signature_key_buffer);
 
         std::wcout << L"Signature verification key received and imported successfully\n";
+
+        //
+        // Receive and decrypt message, verify its signature
+        //
+
+        const auto ciphertext = pipe.ReceiveMessage<sc::proto::Payload>();
+        const auto signature  = pipe.ReceiveMessage<sc::proto::Payload>();
+
+        std::wcout << L"Encrypted message with signature received\n";
+
+        const auto plaintext = cas::crypto::DecryptCbcAndVerify(provider,
+            session_key, signature_key, std::make_pair(ciphertext, signature));
+
+        std::wcout << L"Decrypted message:\n";
+        sc::utils::DumpHex(plaintext, std::wcout);
 
         return 0;
     }

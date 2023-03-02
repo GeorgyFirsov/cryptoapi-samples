@@ -10,7 +10,9 @@
 // STL headers
 //
 
+#include <algorithm>
 #include <iostream>
+#include <ranges>
 #include <string>
 #include <format>
 #include <vector>
@@ -22,6 +24,7 @@
 
 #include "common.hpp"
 #include "pipe.hpp"
+#include "utils.hpp"
 #include "protocol.hpp"
 
 
@@ -98,6 +101,22 @@ int wmain(int argc, wchar_t** argv)
         pipe.SendMessage<sc::proto::PublicKey>(signature_key_buffer);
 
         std::wcout << L"Signature key sent to client successfully\n";
+
+        //
+        // Encrypt, sign and send message
+        //
+
+        sc::proto::sec_bytes plaintext;
+        std::ranges::copy(std::views::iota(1, 51), std::back_inserter(plaintext));
+
+        std::wcout << L"Plaintext:\n";
+        sc::utils::DumpHex(plaintext, std::wcout);
+
+        const auto [ciphertext, signature] = cas::crypto::EncryptCbcAndSign(provider, session_key, plaintext);
+        pipe.SendMessage<sc::proto::Payload>(ciphertext);
+        pipe.SendMessage<sc::proto::Payload>(signature);
+
+        std::wcout << L"Encrypted message with signature sent to client\n";
 
         //
         // Wait until client process ends to close message queue safe.

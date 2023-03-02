@@ -1,16 +1,8 @@
 //
-// Configuration macros
-//
-
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-
-
-//
 // Windows headers
 //
 
-#include <windows.h>
+#include "windows.hpp"
 #include <wincrypt.h>
 
 
@@ -25,13 +17,6 @@
 
 
 //
-// Boost headers
-//
-
-#include <boost/interprocess/ipc/message_queue.hpp>
-
-
-//
 // Own headers
 //
 
@@ -40,17 +25,10 @@
 #include "protocol.hpp"
 
 
-//
-// Just for simplicity
-//
-
-namespace ipc = boost::interprocess;
-
-
 /**
  * @brief Initiates a connection with a server using message queue.
  */
-void InitiateConnection(ipc::message_queue& queue)
+void InitiateConnection(sc::utils::FilePipe& pipe)
 {
     //
     // Just send current process identifier to server.
@@ -59,7 +37,7 @@ void InitiateConnection(ipc::message_queue& queue)
     sc::proto::sec_bytes pid_buffer(sizeof(DWORD), 0);
     *reinterpret_cast<DWORD*>(pid_buffer.data()) = GetCurrentProcessId();
 
-    sc::utils::SendMessage<sc::proto::Payload>(queue, pid_buffer);
+    pipe.SendMessage<sc::proto::Payload>(pid_buffer);
 }
 
 
@@ -77,13 +55,14 @@ int wmain(int argc, wchar_t** argv)
         // Open server's message queue
         //
 
-        ipc::message_queue queue(ipc::open_only, sc::proto::kQueueName);
+        sc::utils::FilePipe pipe(sc::proto::kQueueName, sc::proto::kServerMessageEvent,
+            sc::proto::kClientMessageEvent);
 
         //
         // Initiate connection with server
         //
 
-        InitiateConnection(queue);
+        InitiateConnection(pipe);
 
         std::wcout << L"Connection request sent\n";
 
@@ -91,8 +70,8 @@ int wmain(int argc, wchar_t** argv)
         // Generate exchange key pair
         //
 
-        cas::crypto::Provider exchange_provider(PROV_RSA_AES);
-        cas::crypto::Key exchange_key(exchange_provider, CALG_RSA_KEYX);
+        cas::crypto::Provider provider(PROV_RSA_AES);
+        cas::crypto::Key exchange_key(provider, AT_KEYEXCHANGE);
 
         std::wcout << L"Exchange key generated successfully\n";
 
@@ -101,7 +80,7 @@ int wmain(int argc, wchar_t** argv)
         //
 
         const auto exchange_key_buffer = exchange_key.Export(PUBLICKEYBLOB);
-        sc::utils::SendMessage<sc::proto::PublicKey>(queue, exchange_key_buffer);
+        pipe.SendMessage<sc::proto::PublicKey>(exchange_key_buffer);
 
         std::wcout << L"Exchange public key sent successfully\n";
 
@@ -109,10 +88,8 @@ int wmain(int argc, wchar_t** argv)
         // Receive and import session key
         //
 
-        const auto session_key_buffer = sc::utils::ReceiveMessage<sc::proto::SymmetricKey>(queue);
-
-        cas::crypto::Provider symmetric_provider(PROV_RSA_AES);
-        cas::crypto::Key session_key(symmetric_provider, session_key_buffer, exchange_key);
+        const auto session_key_buffer = pipe.ReceiveMessage<sc::proto::SymmetricKey>();
+        cas::crypto::Key session_key(provider, session_key_buffer, exchange_key);
 
         std::wcout << L"Session key received and imported successfully\n";
 
@@ -120,10 +97,8 @@ int wmain(int argc, wchar_t** argv)
         // Receive and import signature verification key
         //
 
-        const auto signature_key_buffer = sc::utils::ReceiveMessage<sc::proto::PublicKey>(queue);
-
-        cas::crypto::Provider signature_provider(PROV_RSA_AES);
-        cas::crypto::Key signature_key(signature_provider, signature_key_buffer);
+        const auto signature_key_buffer = pipe.ReceiveMessage<sc::proto::PublicKey>();
+        cas::crypto::Key signature_key(provider, signature_key_buffer);
 
         std::wcout << L"Signature verification key received and imported successfully\n";
 

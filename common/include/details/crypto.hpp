@@ -9,7 +9,7 @@
 // Windows headers
 //
 
-#include "details/windows.hpp"
+#include "windows.hpp"
 
 
 //

@@ -9,7 +9,7 @@
 // Windows headers
 //
 
-#include "details/windows.hpp"
+#include "windows.hpp"
 
 
 //
@@ -94,8 +94,8 @@ String ErrorMessage(DWORD error_code) noexcept
  */
 [[noreturn]] inline void Throw(DWORD error_code, std::source_location loc = std::source_location::current())
 {
-    const auto error_message = std::format("Error in '{}' at '{}:{}'.\nDescription: {}",
-        loc.function_name(), loc.file_name(), loc.line(), ErrorMessage<std::string>(error_code));
+    const auto error_message = std::format("Error 0x{:08X} in '{}' at '{}:{}'.\nDescription: {}",
+        error_code, loc.function_name(), loc.file_name(), loc.line(), ErrorMessage<std::string>(error_code));
 
     throw std::runtime_error(error_message);
 }

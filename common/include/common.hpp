@@ -9,7 +9,8 @@
 // Just list library headers
 // 
 
-#include "details/windows.hpp"
+#include "windows.hpp"
+
 #include "details/crypto.hpp"
 #include "details/error.hpp"
 #include "details/utils.hpp"

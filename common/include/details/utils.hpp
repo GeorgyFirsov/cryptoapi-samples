@@ -9,7 +9,7 @@
 // Windows headers
 //
 
-#include "details/windows.hpp"
+#include "windows.hpp"
 #include "details/error.hpp"
 
 
@@ -82,6 +82,91 @@ public:
         {
             error::ThrowLast();
         }
+    }
+
+private:
+    HANDLE h_; /**< Internal handle */
+};
+
+
+/**
+ * 
+ */
+class Event final
+{
+public:
+    /**
+     * 
+     */
+    enum class Disposition {
+        kCreate,
+        kOpen
+    };
+
+public:
+    /**
+     * 
+     */
+    explicit Event(Disposition disposition, LPCWSTR name, BOOL manual_reset = TRUE, BOOL initially_set = FALSE)
+        : h_(CreateOrOpenEvent(disposition, name, manual_reset, initially_set))
+    { }
+
+    /**
+     * 
+     */
+    ~Event()
+    {
+        if (h_)
+        {
+            CloseHandle(h_);
+        }
+    }
+
+    /**
+     * 
+     */
+    void Set()
+    {
+        if (!SetEvent(h_))
+        {
+            error::ThrowLast();
+        }
+    }
+
+    /**
+     * 
+     */
+    void Reset()
+    {
+        if (!ResetEvent(h_))
+        {
+            error::ThrowLast();
+        }
+    }
+
+    /**
+     * 
+     */
+    void Wait()
+    {
+        if (WAIT_FAILED == WaitForSingleObject(h_, INFINITE))
+        {
+            error::ThrowLast();
+        }
+    }
+
+private:
+    HANDLE CreateOrOpenEvent(Disposition disposition, LPCWSTR name, BOOL manual_reset, BOOL initially_set)
+    {
+        switch (disposition)
+        {
+        case Disposition::kCreate:
+            return CreateEvent(nullptr, manual_reset, initially_set, name);
+        case Disposition::kOpen:
+            return OpenEvent(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, name);
+        }
+
+        error::Throw(ERROR_INVALID_PARAMETER);
     }
 
 private:

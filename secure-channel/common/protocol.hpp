@@ -23,6 +23,18 @@ inline constexpr auto kQueueName = "secure-channel-queue";
 
 
 /**
+ * @brief Server message sending event name
+ */
+inline constexpr auto kServerMessageEvent = L"server-message-event";
+
+
+/**
+ * @brief Client message sending event name
+ */
+inline constexpr auto kClientMessageEvent = L"client-message-event";
+
+
+/**
  * @brief Maximum message queue size.
  */
 inline constexpr auto kMaxMessageNumber = 1024;

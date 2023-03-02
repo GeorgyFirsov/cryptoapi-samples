@@ -361,4 +361,16 @@ encryption_result_t EncryptCbcAndSign(HCRYPTPROV provider, Key key, const sec_ve
 sec_vector<unsigned char> DecryptCbcAndVerify(HCRYPTPROV provider, Key encryption_key,
     Key verification_key, const encryption_result_t& signed_ciphertext);
 
+
+/**
+ * @brief Signs a hash using key obtained from provider context associated with hash.
+ */
+sec_vector<unsigned char> SignHash(HCRYPTHASH hash, DWORD key_spec = AT_SIGNATURE);
+
+
+/**
+ * @brief Verifies hash using specified key. Throws exception in case of verification failure.
+ */
+void VerifySignature(HCRYPTHASH hash, HCRYPTKEY verification_key, const sec_vector<unsigned char>& signature);
+
 }  // namespace cas::crypto

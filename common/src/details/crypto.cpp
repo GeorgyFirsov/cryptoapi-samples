@@ -263,22 +263,10 @@ encryption_result_t EncryptCbcAndSign(HCRYPTPROV provider, Key key, const sec_ve
     }
 
     //
-    // Now let's sign the hash
+    // Now let's sign the hash and return result
     //
 
-    DWORD signature_len = 0;
-    if (!CryptSignHash(hash, AT_SIGNATURE, nullptr, 0, nullptr, &signature_len))
-    {
-        error::ThrowLast();
-    }
-
-    sec_vector<unsigned char> signature(signature_len, 0);
-    if (!CryptSignHash(hash, AT_SIGNATURE, nullptr, 0, signature.data(), &signature_len))
-    {
-        error::ThrowLast();
-    }
-
-    return std::make_pair(result, signature);
+    return std::make_pair(result, SignHash(hash, AT_SIGNATURE));
 }
 
 
@@ -333,12 +321,36 @@ sec_vector<unsigned char> DecryptCbcAndVerify(HCRYPTPROV provider, Key encryptio
     // Let's verify signature
     //
 
-    if (!CryptVerifySignature(hash, signature.data(), signature.size(), verification_key, nullptr, 0))
+    VerifySignature(hash, verification_key, signature);
+
+    return result;
+}
+
+
+sec_vector<unsigned char> SignHash(HCRYPTHASH hash, DWORD key_spec /* = AT_SIGNATURE */)
+{
+    DWORD signature_len = 0;
+    if (!CryptSignHash(hash, AT_SIGNATURE, nullptr, 0, nullptr, &signature_len))
     {
         error::ThrowLast();
     }
 
-    return result;
+    sec_vector<unsigned char> signature(signature_len, 0);
+    if (!CryptSignHash(hash, AT_SIGNATURE, nullptr, 0, signature.data(), &signature_len))
+    {
+        error::ThrowLast();
+    }
+
+    return signature;
+}
+
+
+void VerifySignature(HCRYPTHASH hash, HCRYPTKEY verification_key, const sec_vector<unsigned char>& signature)
+{
+    if (!CryptVerifySignature(hash, signature.data(), signature.size(), verification_key, nullptr, 0))
+    {
+        error::ThrowLast();
+    }
 }
 
 }  // namespace cas::crypto

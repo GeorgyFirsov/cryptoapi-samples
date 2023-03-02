@@ -3,6 +3,17 @@
  * @brief CryptoAPI helpers implementation
  */
 
+//
+// STL headers
+//
+
+#include <algorithm>
+#include <iterator>
+
+
+//
+// Library headers
+//
 
 #include "details/crypto.hpp"
 #include "details/utils.hpp"
@@ -155,6 +166,24 @@ void Key::SetParameter(DWORD parameter, const void* data, DWORD flags /* = 0 */)
 }
 
 
+sec_vector<unsigned char> Key::GetParameter(DWORD parameter, DWORD flags /* = 0 */)
+{
+    DWORD buffer_size = 0;
+    if (!CryptGetKeyParam(key_, parameter, nullptr, &buffer_size, flags))
+    {
+        error::ThrowLast();
+    }
+
+    sec_vector<unsigned char> buffer(buffer_size, 0);
+    if (!CryptGetKeyParam(key_, parameter, buffer.data(), &buffer_size, flags))
+    {
+        error::ThrowLast();
+    }
+
+    return buffer;
+}
+
+
 Hash::Hash(HCRYPTPROV provider, ALG_ID algid, HCRYPTKEY key /* = 0 */, DWORD flags /* = 0 */)
     : hash_(0)
 {
@@ -177,6 +206,139 @@ void Hash::Clear() noexcept
     {
         CryptDestroyHash(std::exchange(hash_, 0));
     }
+}
+
+
+encryption_result_t EncryptCbcAndSign(HCRYPTPROV provider, Key key, const sec_vector<unsigned char>& plaintext)
+{
+    //
+    // Query some parameters
+    //
+
+    const auto block_len_buffer = key.GetParameter(KP_BLOCKLEN);
+    const auto block_len        = *reinterpret_cast<const DWORD*>(block_len_buffer.data()) / 8;
+    const auto ciphertext_len   = (plaintext.size() + block_len - 1) & ~(block_len - 1);
+    const auto full_buffer_len  = block_len + ciphertext_len;
+
+    sec_vector<unsigned char> result(block_len, 0);
+    result.reserve(full_buffer_len);
+
+    //
+    // Generate IV and put directly to the output buffer
+    //
+
+    if (!CryptGenRandom(provider, block_len, result.data()))
+    {
+        error::ThrowLast();
+    }
+
+    //
+    // Set encryption parameters
+    //
+
+    DWORD mode    = CRYPT_MODE_CBC;
+    DWORD padding = PKCS5_PADDING;
+
+    key.SetParameter(KP_MODE, &mode);
+    key.SetParameter(KP_PADDING, &padding);
+    key.SetParameter(KP_IV, result.data());
+
+    //
+    // Copy plaintext to output buffer right after IV
+    //
+
+    std::ranges::copy(plaintext, std::back_inserter(result));
+    result.resize(full_buffer_len, 0);
+
+    //
+    // Create hash object, that will be signed afterwards and encrypt data
+    //
+
+    Hash hash(provider, CALG_SHA_256);
+    auto data_length = static_cast<DWORD>(plaintext.size());
+
+    if (!CryptEncrypt(key, hash, TRUE, 0, result.data() + block_len, &data_length, ciphertext_len))
+    {
+        error::ThrowLast();
+    }
+
+    //
+    // Now let's sign the hash
+    //
+
+    DWORD signature_len = 0;
+    if (!CryptSignHash(hash, AT_SIGNATURE, nullptr, 0, nullptr, &signature_len))
+    {
+        error::ThrowLast();
+    }
+
+    sec_vector<unsigned char> signature(signature_len, 0);
+    if (!CryptSignHash(hash, AT_SIGNATURE, nullptr, 0, signature.data(), &signature_len))
+    {
+        error::ThrowLast();
+    }
+
+    return std::make_pair(result, signature);
+}
+
+
+sec_vector<unsigned char> DecryptCbcAndVerify(HCRYPTPROV provider, Key encryption_key,
+    Key verification_key, const encryption_result_t& signed_ciphertext)
+{
+    //
+    // Query some parameters
+    //
+
+    const auto block_len_buffer = encryption_key.GetParameter(KP_BLOCKLEN);
+    const auto block_len        = *reinterpret_cast<const DWORD*>(block_len_buffer.data()) / 8;
+
+    //
+    // Split ciphertext and its signature
+    //
+
+    const auto& [ciphertext, signature] = signed_ciphertext;
+
+    //
+    // Set decryption parameters
+    //
+
+    DWORD mode    = CRYPT_MODE_CBC;
+    DWORD padding = PKCS5_PADDING;
+
+    encryption_key.SetParameter(KP_MODE, &mode);
+    encryption_key.SetParameter(KP_PADDING, &padding);
+    encryption_key.SetParameter(KP_IV, ciphertext.data());
+
+    //
+    // Copy ciphertext to output buffer
+    //
+
+    sec_vector<unsigned char> result(std::next(ciphertext.cbegin(), block_len), ciphertext.cend());
+
+    //
+    // Create hash and decrypt message
+    //
+
+    Hash hash(provider, CALG_SHA_256);
+    auto data_length = static_cast<DWORD>(ciphertext.size() - block_len);
+
+    if (!CryptDecrypt(encryption_key, hash, TRUE, 0, result.data(), &data_length))
+    {
+        error::ThrowLast();
+    }
+
+    result.resize(data_length);
+
+    //
+    // Let's verify signature
+    //
+
+    if (!CryptVerifySignature(hash, signature.data(), signature.size(), verification_key, nullptr, 0))
+    {
+        error::ThrowLast();
+    }
+
+    return result;
 }
 
 }  // namespace cas::crypto

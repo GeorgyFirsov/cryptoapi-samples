@@ -282,6 +282,11 @@ public:
     void SetParameter(DWORD parameter, const void* data, DWORD flags = 0);
 
     /**
+     * @brief Obtains a key parameter.
+     */
+    sec_vector<unsigned char> GetParameter(DWORD parameter, DWORD flags = 0);
+
+    /**
      * @brief Get the internal key handle.
      */
     operator HCRYPTKEY() const noexcept { return key_; }
@@ -326,5 +331,34 @@ public:
 private:
     HCRYPTHASH hash_; /**< Internal hash descriptor */
 };
+
+
+/**
+ * @brief Result of encryption and signing process.
+ *        First member is a ciphertext, second is a signature.
+ */
+using encryption_result_t = std::pair<sec_vector<unsigned char>, sec_vector<unsigned char>>;
+
+
+/**
+ * @brief Encrypts a buffer in CBC mode on a specified key.
+ *
+ * Key is copied into a function to cause its duplication and
+ * hence -- immutability of the original key.
+ * 
+ * Initial vector is generated via CryptGenRandom with 'provider'
+ * and prepended to the ciphertext.
+ * Signing key is obtained from 'provider'.
+ */
+encryption_result_t EncryptCbcAndSign(HCRYPTPROV provider, Key key, const sec_vector<unsigned char>& plaintext);
+
+
+/**
+ * @brief Decrypts a buffer in CBC mode on a specified key.
+ *
+ * IV is obtained from the beginning of the ciphertext.
+ */
+sec_vector<unsigned char> DecryptCbcAndVerify(HCRYPTPROV provider, Key encryption_key,
+    Key verification_key, const encryption_result_t& signed_ciphertext);
 
 }  // namespace cas::crypto

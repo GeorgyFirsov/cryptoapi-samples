@@ -34,7 +34,7 @@
 #include "common.hpp"
 
 
-namespace sc::utils {
+namespace sc::ipc {
 
 /**
  * @brief File-based interprocess communication pipe
@@ -161,4 +161,4 @@ private:
     bool is_server_;         /**< Flags, that is true on server side only */
 };
 
-}  // namespace sc::utils
+}  // namespace sc::ipc

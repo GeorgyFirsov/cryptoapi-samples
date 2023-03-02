@@ -28,7 +28,7 @@
 /**
  * @brief Initiates a connection with a server using message queue.
  */
-void InitiateConnection(sc::utils::FilePipe& pipe)
+void InitiateConnection(sc::ipc::FilePipe& pipe)
 {
     //
     // Just send current process identifier to server.
@@ -55,7 +55,7 @@ int wmain(int argc, wchar_t** argv)
         // Open server's message queue
         //
 
-        sc::utils::FilePipe pipe(sc::proto::kQueueName, sc::proto::kServerMessageEvent,
+        sc::ipc::FilePipe pipe(sc::proto::kQueueName, sc::proto::kServerMessageEvent,
             sc::proto::kClientMessageEvent);
 
         //

@@ -28,7 +28,7 @@
 /**
  * @brief Receives a client's PID and returns it.
  */
-DWORD GetClientPid(sc::utils::FilePipe& pipe)
+DWORD GetClientPid(sc::ipc::FilePipe& pipe)
 {
     const auto raw_pid = pipe.ReceiveMessage<sc::proto::Payload>();
     return *reinterpret_cast<const DWORD*>(raw_pid.data());
@@ -49,7 +49,7 @@ int wmain(int argc, wchar_t** argv)
         // Create message queue to interact with a client
         //
 
-        sc::utils::FilePipe pipe(sc::proto::kQueueName, sc::proto::kServerMessageEvent,
+        sc::ipc::FilePipe pipe(sc::proto::kQueueName, sc::proto::kServerMessageEvent,
             sc::proto::kClientMessageEvent, sc::proto::kMaxMessageNumber, sc::proto::kMaxMessageSize);
 
         //

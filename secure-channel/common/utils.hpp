@@ -14,7 +14,7 @@
 
 //
 // STL headers
-// 
+//
 
 #include <string>
 
@@ -82,6 +82,12 @@ public:
             queue_t::remove(queue_name_.c_str());
         }
     }
+
+    FilePipe(const FilePipe&)            = delete;
+    FilePipe& operator=(const FilePipe&) = delete;
+
+    FilePipe(FilePipe&&)            = delete;
+    FilePipe& operator=(FilePipe&&) = delete;
 
     /**
      * @brief Send message into message queue. Message type is determined by traits.

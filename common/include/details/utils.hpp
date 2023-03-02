@@ -90,29 +90,36 @@ private:
 
 
 /**
- * 
+ * @brief Event handle wrapper.
  */
 class Event final
 {
+    Event(const Event&)            = delete;
+    Event& operator=(const Event&) = delete;
+
+    Event(Event&&)            = delete;
+    Event& operator=(Event&&) = delete;
+
 public:
     /**
      * 
      */
-    enum class Disposition {
+    enum class Disposition
+    {
         kCreate,
         kOpen
     };
 
 public:
     /**
-     * 
+     * @brief Opens named or creates any (named or unnamed) event.
      */
     explicit Event(Disposition disposition, LPCWSTR name, BOOL manual_reset = TRUE, BOOL initially_set = FALSE)
         : h_(CreateOrOpenEvent(disposition, name, manual_reset, initially_set))
     { }
 
     /**
-     * 
+     * @brief Closes internal handle.
      */
     ~Event()
     {
@@ -123,7 +130,7 @@ public:
     }
 
     /**
-     * 
+     * @brief Sets the event.
      */
     void Set()
     {
@@ -134,7 +141,7 @@ public:
     }
 
     /**
-     * 
+     * @brief Resets the event.
      */
     void Reset()
     {
@@ -145,7 +152,7 @@ public:
     }
 
     /**
-     * 
+     * @brief Waits until the wrapped event will become signaled.
      */
     void Wait()
     {

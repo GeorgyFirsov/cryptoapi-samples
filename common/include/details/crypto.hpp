@@ -10,6 +10,7 @@
 //
 
 #include "windows.hpp"
+#include <wincrypt.h>
 
 
 //

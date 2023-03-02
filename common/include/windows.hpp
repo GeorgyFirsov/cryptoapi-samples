@@ -36,9 +36,7 @@
 
 
 //
-// Windows headers themselves
+// Windows header themself
 //
 
 #include <Windows.h>
-#include <wincrypt.h>
-#include <winsock2.h>

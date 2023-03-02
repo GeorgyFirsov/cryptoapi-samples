@@ -1,6 +1,6 @@
 /**
- * @file utils.hpp
- * @brief Helper functions.
+ * @file pipe.hpp
+ * @brief Interprocess pipe implementation.
  */
 
 #pragma once

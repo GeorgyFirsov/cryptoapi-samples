@@ -1,7 +1,7 @@
 #
 # Directories
 #
-set(CAS_CERT_STORE_ROOT			${CAS_CERTIFICATES}/request)
+set(CAS_CERT_STORE_ROOT			${CAS_CERTIFICATES}/store)
 
 #
 # Sources and headers

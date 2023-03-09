@@ -1,7 +1,7 @@
 #
 # Directories
 #
-set(CAS_CERT_SIGNING_ROOT			${CAS_CERTIFICATES}/request)
+set(CAS_CERT_SIGNING_ROOT			${CAS_CERTIFICATES}/signing)
 
 #
 # Sources and headers

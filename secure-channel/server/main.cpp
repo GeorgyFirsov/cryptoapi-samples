@@ -24,7 +24,6 @@
 
 #include "common.hpp"
 #include "pipe.hpp"
-#include "utils.hpp"
 #include "protocol.hpp"
 
 
@@ -110,7 +109,7 @@ int wmain(int argc, wchar_t** argv)
         std::ranges::copy(std::views::iota(1, 51), std::back_inserter(plaintext));
 
         std::wcout << L"Plaintext:\n";
-        sc::utils::DumpHex(plaintext, std::wcout);
+        cas::utils::DumpHex(plaintext, std::wcout);
 
         const auto [ciphertext, signature] = cas::crypto::EncryptCbcAndSign(provider, session_key, plaintext);
         pipe.SendMessage<sc::proto::Payload>(ciphertext);

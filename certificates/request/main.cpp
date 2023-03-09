@@ -27,26 +27,6 @@
 static constexpr auto kSubject = "Certificate's subject";
 
 
-/**
- * @brief Prints data in hex.
- */
-template<typename Alloc>
-void DumpHex(const std::vector<unsigned char, Alloc>& data, std::wostream& out)
-{
-    static constexpr auto kColumns = 16;
-
-    for (size_t idx = 0; idx < data.size(); ++idx)
-    {
-        if (idx % kColumns == 0 && idx)
-        {
-            out << L'\n';
-        }
-
-        out << std::format(L"{:02X} ", data[idx]);
-    }
-}
-
-
 int wmain()
 {
     try
@@ -109,8 +89,7 @@ int wmain()
         //
 
         std::wcout << L"Certificate request in ASN.1 encoding:\n";
-
-        DumpHex(signed_request, std::wcout);
+        cas::utils::DumpHex(signed_request, std::wcout);
 
         return 0;
     }

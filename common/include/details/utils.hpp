@@ -13,6 +13,15 @@
 #include "details/error.hpp"
 
 
+//
+// STL headers
+//
+
+#include <format>
+#include <vector>
+#include <ostream>
+
+
 namespace cas::utils {
 
 /**
@@ -179,5 +188,25 @@ private:
 private:
     HANDLE h_; /**< Internal handle */
 };
+
+
+/**
+ * @brief Prints data in hex.
+ */
+template<typename Alloc>
+void DumpHex(const std::vector<unsigned char, Alloc>& data, std::wostream& out)
+{
+    static constexpr auto kColumns = 16;
+
+    for (size_t idx = 0; idx < data.size(); ++idx)
+    {
+        if (idx % kColumns == 0 && idx)
+        {
+            out << L'\n';
+        }
+
+        out << std::format(L"{:02X} ", data[idx]);
+    }
+}
 
 }  // namespace cas::utils

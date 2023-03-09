@@ -22,7 +22,6 @@
 
 #include "common.hpp"
 #include "pipe.hpp"
-#include "utils.hpp"
 #include "protocol.hpp"
 
 
@@ -116,7 +115,7 @@ int wmain(int argc, wchar_t** argv)
             session_key, signature_key, std::make_pair(ciphertext, signature));
 
         std::wcout << L"Decrypted message:\n";
-        sc::utils::DumpHex(plaintext, std::wcout);
+        cas::utils::DumpHex(plaintext, std::wcout);
 
         return 0;
     }

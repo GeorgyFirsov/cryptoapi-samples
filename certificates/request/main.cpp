@@ -24,7 +24,7 @@
 /**
  * @brief Subject name
  */
-static constexpr auto kSubject = "Certificate's subject";
+static constexpr auto kSubject = "Georgy V. Firsov";
 
 
 int wmain()

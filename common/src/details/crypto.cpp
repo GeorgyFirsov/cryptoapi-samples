@@ -209,6 +209,25 @@ void Hash::Clear() noexcept
 }
 
 
+PublicKeyInfo::PublicKeyInfo(HCRYPTPROV provider, DWORD key_specification,
+    DWORD encoding_type /* = PKCS_7_ASN_ENCODING | X509_ASN_ENCODING */)
+    : buffer_()
+{
+    DWORD buffer_size = 0;
+    if (!CryptExportPublicKeyInfo(provider, key_specification, encoding_type, nullptr, &buffer_size))
+    {
+        error::ThrowLast();
+    }
+
+    buffer_.resize(buffer_size);
+    if (!CryptExportPublicKeyInfo(provider, key_specification, encoding_type,
+            reinterpret_cast<PCERT_PUBLIC_KEY_INFO>(buffer_.data()), &buffer_size))
+    {
+        error::ThrowLast();
+    }
+}
+
+
 encryption_result_t EncryptCbcAndSign(HCRYPTPROV provider, Key key, const sec_vector<unsigned char>& plaintext)
 {
     //
@@ -351,6 +370,45 @@ void VerifySignature(HCRYPTHASH hash, HCRYPTKEY verification_key, const sec_vect
     {
         error::ThrowLast();
     }
+}
+
+
+sec_vector<unsigned char> EncodeObject(DWORD encoding_type, LPCSTR struct_type, const void* struct_data)
+{
+    DWORD buffer_size = 0;
+    if (!CryptEncodeObject(encoding_type, struct_type, struct_data, nullptr, &buffer_size))
+    {
+        error::ThrowLast();
+    }
+
+    sec_vector<unsigned char> result(buffer_size, 0);
+    if (!CryptEncodeObject(encoding_type, struct_type, struct_data, result.data(), &buffer_size))
+    {
+        error::ThrowLast();
+    }
+
+    return result;
+}
+
+
+sec_vector<unsigned char> SignAndEncodeCertificate(HCRYPTPROV provider, DWORD key_specification, DWORD encoding_type,
+    LPCSTR struct_type, const void* struct_data, PCRYPT_ALGORITHM_IDENTIFIER signature_algorithm)
+{
+    DWORD buffer_size = 0;
+    if (!CryptSignAndEncodeCertificate(provider, key_specification, encoding_type, struct_type,
+            struct_data, signature_algorithm, nullptr, nullptr, &buffer_size))
+    {
+        error::ThrowLast();
+    }
+
+    sec_vector<unsigned char> result(buffer_size, 0);
+    if (!CryptSignAndEncodeCertificate(provider, key_specification, encoding_type, struct_type,
+            struct_data, signature_algorithm, nullptr, result.data(), &buffer_size))
+    {
+        error::ThrowLast();
+    }
+
+    return result;
 }
 
 }  // namespace cas::crypto

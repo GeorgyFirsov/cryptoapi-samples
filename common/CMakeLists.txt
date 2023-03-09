@@ -25,9 +25,10 @@ set(CAS_COMMON_SOURCES		${CAS_COMMON_SOURCE_FILES}
 add_library(common			${CAS_COMMON_SOURCES})
 
 #
-# Link with WinSock2
+# Link with WinSock2 and Crypt32
 #
 target_link_libraries(common PRIVATE Ws2_32)
+target_link_libraries(common PRIVATE Crypt32)
 
 #
 # Includes

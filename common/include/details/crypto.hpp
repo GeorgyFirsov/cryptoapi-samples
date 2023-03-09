@@ -334,6 +334,28 @@ private:
 
 
 /**
+ * @brief Wrapper over PCERT_PUBLIC_KEY_INFO.
+ */
+class PublicKeyInfo final
+{
+public:
+    /**
+     * @brief Obtains structure via CryptExportPublicKeyInfo.
+     */
+    explicit PublicKeyInfo(HCRYPTPROV provider, DWORD key_specification,
+        DWORD encoding_type = PKCS_7_ASN_ENCODING | X509_ASN_ENCODING);
+
+    /**
+     * @brief Implicit cast operator.
+     */
+    operator PCERT_PUBLIC_KEY_INFO() noexcept { return reinterpret_cast<PCERT_PUBLIC_KEY_INFO>(buffer_.data()); }
+
+private:
+    sec_vector<unsigned char> buffer_; /**< Buffer with public key information */
+};
+
+
+/**
  * @brief Result of encryption and signing process.
  *        First member is a ciphertext, second is a signature.
  */
@@ -372,5 +394,18 @@ sec_vector<unsigned char> SignHash(HCRYPTHASH hash, DWORD key_spec = AT_SIGNATUR
  * @brief Verifies hash using specified key. Throws exception in case of verification failure.
  */
 void VerifySignature(HCRYPTHASH hash, HCRYPTKEY verification_key, const sec_vector<unsigned char>& signature);
+
+
+/**
+ * @brief Wrapper over CryptEncodeObject.
+ */
+sec_vector<unsigned char> EncodeObject(DWORD encoding_type, LPCSTR struct_type, const void* struct_data);
+
+
+/**
+ * @brief Wrapper over CryptSignAndEncodeCertificate.
+ */
+sec_vector<unsigned char> SignAndEncodeCertificate(HCRYPTPROV provider, DWORD key_specification, DWORD encoding_type,
+    LPCSTR struct_type, const void* struct_data, PCRYPT_ALGORITHM_IDENTIFIER signature_algorithm);
 
 }  // namespace cas::crypto

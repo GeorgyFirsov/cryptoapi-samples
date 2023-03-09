@@ -15,7 +15,7 @@
 namespace sc::utils {
 
 /**
- * 
+ * @brief Prints data in hex.
  */
 template<typename Alloc>
 void DumpHex(const std::vector<unsigned char, Alloc>& data, std::wostream& out)

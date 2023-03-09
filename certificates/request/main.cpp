@@ -21,7 +21,30 @@
 #include "common.hpp"
 
 
+/**
+ * @brief Subject name
+ */
 static constexpr auto kSubject = "Certificate's subject";
+
+
+/**
+ * @brief Prints data in hex.
+ */
+template<typename Alloc>
+void DumpHex(const std::vector<unsigned char, Alloc>& data, std::wostream& out)
+{
+    static constexpr auto kColumns = 16;
+
+    for (size_t idx = 0; idx < data.size(); ++idx)
+    {
+        if (idx % kColumns == 0 && idx)
+        {
+            out << L'\n';
+        }
+
+        out << std::format(L"{:02X} ", data[idx]);
+    }
+}
 
 
 int wmain()
@@ -80,6 +103,14 @@ int wmain()
         const auto signed_request = cas::crypto::SignAndEncodeCertificate(provider, AT_KEYEXCHANGE,
             PKCS_7_ASN_ENCODING | X509_ASN_ENCODING, X509_CERT_REQUEST_TO_BE_SIGNED,
             &certificate_request, &signature_algorithm);
+
+        //
+        // Just print encoded request
+        //
+
+        std::wcout << L"Certificate request in ASN.1 encoding:\n";
+
+        DumpHex(signed_request, std::wcout);
 
         return 0;
     }

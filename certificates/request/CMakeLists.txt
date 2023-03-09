@@ -16,9 +16,9 @@ set(CAS_CERT_REQUEST_SOURCES		${CAS_CERT_REQUEST_SOURCE_FILES}
 #
 # App itself
 #
-add_executable(cert_request			${CAS_CERT_REQUEST_SOURCES})
+add_executable(request				${CAS_CERT_REQUEST_SOURCES})
 
 #
 # Link with common
 #
-target_link_libraries(cert_request PRIVATE common)
+target_link_libraries(request PRIVATE common)

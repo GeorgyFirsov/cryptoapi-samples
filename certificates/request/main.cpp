@@ -32,6 +32,12 @@ int wmain()
     try
     {
         //
+        // Set Windows-1251 codepage
+        //
+
+        USE_CODEPAGE(cas::utils::kWin1251);
+
+        //
         // Encode subject name
         //
 

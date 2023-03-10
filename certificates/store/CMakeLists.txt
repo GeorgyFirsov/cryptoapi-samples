@@ -7,7 +7,8 @@ find_package(Boost COMPONENTS program_options REQUIRED)
 # Directories
 #
 set(CAS_CERT_STORE_ROOT			${CAS_CERTIFICATES}/store)
-set(CAS_CERT_STORE_INCLUDE_DIRS	${Boost_INCLUDE_DIR})
+set(CAS_CERT_STORE_INCLUDE_DIRS	${Boost_INCLUDE_DIR}
+								${CAS_CERTIFICATES_COMMON_INCLUDE})
 
 #
 # Sources and headers

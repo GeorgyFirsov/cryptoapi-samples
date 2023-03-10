@@ -28,6 +28,7 @@
 //
 
 #include "common.hpp"
+#include "store.hpp"
 
 
 //
@@ -57,12 +58,6 @@ static constexpr auto kDeleteDescription = "delete certificate with given SHA1 h
 static constexpr auto kPurge             = "purge";
 static constexpr auto kPurgeDefinition   = "purge,p";
 static constexpr auto kPurgeDescription  = "removes everything (stores, certs, ...) created by the app";
-
-
-/**
- * @brief Certificates store name
- */
-static constexpr auto kStoreName = L"CryptoLab Certificate Store";
 
 
 /**
@@ -158,7 +153,7 @@ int wmain(int argc, wchar_t** argv)
         // Open certificate store
         //
 
-        cas::crypto::CertStore store(CERT_STORE_PROV_SYSTEM, 0, CERT_SYSTEM_STORE_CURRENT_USER, kStoreName);
+        cas::crypto::CertStore store(CERT_STORE_PROV_SYSTEM, 0, CERT_SYSTEM_STORE_CURRENT_USER, cert::kStoreName);
 
         //
         // Check if one requests to delete certificate
@@ -239,7 +234,7 @@ int wmain(int argc, wchar_t** argv)
 
 #pragma warning(suppress : 26444)  // Unnamed local variable
             cas::crypto::CertStore(CERT_STORE_PROV_SYSTEM, 0,
-                CERT_SYSTEM_STORE_CURRENT_USER | CERT_STORE_DELETE_FLAG, kStoreName);
+                CERT_SYSTEM_STORE_CURRENT_USER | CERT_STORE_DELETE_FLAG, cert::kStoreName);
 
             std::wcout << L"Application's data purged successfully\n";
         }

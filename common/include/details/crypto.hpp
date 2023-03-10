@@ -380,8 +380,8 @@ public:
     /**
      * @brief Creates a self signed certificate via CertCreateSelfSignCertificate.
      */
-    static Certificate CreateSelfSigned(HCRYPTPROV provider, PCERT_NAME_BLOB issuer, DWORD flags = 0, 
-        PCRYPT_KEY_PROV_INFO key_provider_info = nullptr, PCRYPT_ALGORITHM_IDENTIFIER signature_algorithm = nullptr, 
+    static Certificate CreateSelfSigned(HCRYPTPROV provider, PCERT_NAME_BLOB issuer, DWORD flags = 0,
+        PCRYPT_KEY_PROV_INFO key_provider_info = nullptr, PCRYPT_ALGORITHM_IDENTIFIER signature_algorithm = nullptr,
         PSYSTEMTIME start_time = nullptr, PSYSTEMTIME end_time = nullptr, PCERT_EXTENSIONS extensions = nullptr);
 
     /**
@@ -489,5 +489,17 @@ sec_vector<unsigned char> EncodeObject(DWORD encoding_type, LPCSTR struct_type, 
  */
 sec_vector<unsigned char> SignAndEncodeCertificate(HCRYPTPROV provider, DWORD key_specification, DWORD encoding_type,
     LPCSTR struct_type, const void* struct_data, PCRYPT_ALGORITHM_IDENTIFIER signature_algorithm);
+
+
+/**
+ * @brief Signs a message using given public key certificate.
+ */
+sec_vector<unsigned char> SignMessage(PCCERT_CONTEXT signing_certificate, const sec_vector<unsigned char>& message);
+
+
+/**
+ * @brief Verifies message signature.
+ */
+void VerifySignature(const sec_vector<unsigned char>& signed_message, DWORD signature_index = 0);
 
 }  // namespace cas::crypto

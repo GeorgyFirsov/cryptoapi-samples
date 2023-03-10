@@ -495,4 +495,47 @@ sec_vector<unsigned char> SignAndEncodeCertificate(HCRYPTPROV provider, DWORD ke
     return result;
 }
 
+
+sec_vector<unsigned char> SignMessage(PCCERT_CONTEXT signing_certificate, const sec_vector<unsigned char>& message)
+{
+    CRYPT_SIGN_MESSAGE_PARA sign_patameters {};
+    sign_patameters.cbSize                 = sizeof(CRYPT_SIGN_MESSAGE_PARA);
+    sign_patameters.dwMsgEncodingType      = PKCS_7_ASN_ENCODING | X509_ASN_ENCODING;
+    sign_patameters.pSigningCert           = signing_certificate;
+    sign_patameters.HashAlgorithm.pszObjId = const_cast<LPSTR>(szOID_RSA_SHA256RSA);
+    sign_patameters.cMsgCert               = 1;
+    sign_patameters.rgpMsgCert             = &signing_certificate;
+
+    auto message_data = message.data();
+    auto message_size = static_cast<DWORD>(message.size());
+
+    DWORD buffer_size = 0;
+    if (!CryptSignMessage(&sign_patameters, FALSE, 1, &message_data, &message_size, nullptr, &buffer_size))
+    {
+        error::ThrowLast();
+    }
+
+    sec_vector<unsigned char> result(buffer_size, 0);
+    if (!CryptSignMessage(&sign_patameters, FALSE, 1, &message_data, &message_size, result.data(), &buffer_size))
+    {
+        error::ThrowLast();
+    }
+
+    return result;
+}
+
+
+void VerifySignature(const sec_vector<unsigned char>& signed_message, DWORD signature_index /* = 0 */)
+{
+    CRYPT_VERIFY_MESSAGE_PARA verify_parameters {};
+    verify_parameters.cbSize                   = sizeof(CRYPT_VERIFY_MESSAGE_PARA);
+    verify_parameters.dwMsgAndCertEncodingType = PKCS_7_ASN_ENCODING | X509_ASN_ENCODING;
+
+    if (!CryptVerifyMessageSignature(&verify_parameters, signature_index, signed_message.data(),
+            signed_message.size(), nullptr, nullptr, nullptr))
+    {
+        error::ThrowLast();
+    }
+}
+
 }  // namespace cas::crypto

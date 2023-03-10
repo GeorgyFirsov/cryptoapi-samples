@@ -11,6 +11,7 @@
 
 #include "windows.hpp"
 
+#include "details/certificate.hpp"
 #include "details/crypto.hpp"
 #include "details/encoding.hpp"
 #include "details/error.hpp"

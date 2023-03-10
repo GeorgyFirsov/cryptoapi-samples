@@ -3,6 +3,8 @@
  * @brief Encoding functions.
  */
 
+#pragma once
+
 //
 // Windows headers
 //

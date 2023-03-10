@@ -98,9 +98,9 @@ int wmain(int argc, wchar_t** argv)
         // Extract parameters
         //
 
-        const auto provider_name  = boost::any_cast<std::wstring>(variables[kProvider].value());
-        const auto provider_type  = boost::any_cast<DWORD>(variables[kType].value());
-        const auto container_name = boost::any_cast<std::wstring>(variables[kContainer].value());
+        const auto provider_name  = variables[kProvider].as<std::wstring>();
+        const auto provider_type  = variables[kType].as<DWORD>();
+        const auto container_name = variables[kContainer].as<std::wstring>();
 
         std::wcout << std::format(LR"(Using provider "{}" of type {} to create container with name "{}")",
                           provider_name, provider_type, container_name)

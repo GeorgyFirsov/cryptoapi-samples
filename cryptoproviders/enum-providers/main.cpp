@@ -104,7 +104,7 @@ int wmain(int argc, wchar_t** argv)
         // Get provider type and list all providers of this type
         //
 
-        const auto requested_type = boost::any_cast<DWORD>(variables[kType].value());
+        const auto requested_type = variables[kType].as<DWORD>();
 
         for (DWORD index = 0; /* Intentionally empty */; ++index)
         {

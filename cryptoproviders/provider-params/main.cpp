@@ -161,8 +161,8 @@ int wmain(int argc, wchar_t** argv)
         // Extract parameters
         //
 
-        const auto provider_name = boost::any_cast<std::wstring>(variables[kProvider].value());
-        const auto provider_type = boost::any_cast<DWORD>(variables[kType].value());
+        const auto provider_name = variables[kProvider].as<std::wstring>();
+        const auto provider_type = variables[kType].as<DWORD>();
 
         std::wcout << std::format(LR"(Enumerating parameters of provider "{}" of type {})",
                           provider_name, provider_type)

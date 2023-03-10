@@ -117,6 +117,10 @@ int wmain(int argc, wchar_t** argv)
         std::wcout << L"\nSigned message:\n";
         cas::utils::DumpHex(signed_message, std::wcout);
 
+        //
+        // And now immediately verify signature
+        //
+
         cas::crypto::VerifySignature(signed_message);
 
         std::wcout << L"\nMessage signature successfully verified\n";

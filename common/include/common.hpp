@@ -12,5 +12,6 @@
 #include "windows.hpp"
 
 #include "details/crypto.hpp"
+#include "details/encoding.hpp"
 #include "details/error.hpp"
 #include "details/utils.hpp"

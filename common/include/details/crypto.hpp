@@ -473,15 +473,25 @@ sec_vector<unsigned char> SignHash(HCRYPTHASH hash, DWORD key_spec = AT_SIGNATUR
 
 
 /**
+ * @brief Signs a message using given public key certificate.
+ * 
+ * Exploits a high-level interface instead of low-level one, as in previous function.
+ */
+sec_vector<unsigned char> SignMessage(PCCERT_CONTEXT signing_certificate, const sec_vector<unsigned char>& message);
+
+
+/**
  * @brief Verifies hash using specified key. Throws exception in case of verification failure.
  */
 void VerifySignature(HCRYPTHASH hash, HCRYPTKEY verification_key, const sec_vector<unsigned char>& signature);
 
 
 /**
- * @brief Wrapper over CryptEncodeObject.
+ * @brief Verifies message signature.
+ * 
+ * Exploits a high-level interface instead of low-level one, as in previous function.
  */
-sec_vector<unsigned char> EncodeObject(DWORD encoding_type, LPCSTR struct_type, const void* struct_data);
+void VerifySignature(const sec_vector<unsigned char>& signed_message, DWORD signature_index = 0);
 
 
 /**
@@ -492,14 +502,8 @@ sec_vector<unsigned char> SignAndEncodeCertificate(HCRYPTPROV provider, DWORD ke
 
 
 /**
- * @brief Signs a message using given public key certificate.
+ * @brief Wrapper over CryptEncodeObject.
  */
-sec_vector<unsigned char> SignMessage(PCCERT_CONTEXT signing_certificate, const sec_vector<unsigned char>& message);
-
-
-/**
- * @brief Verifies message signature.
- */
-void VerifySignature(const sec_vector<unsigned char>& signed_message, DWORD signature_index = 0);
+sec_vector<unsigned char> EncodeObject(DWORD encoding_type, LPCSTR struct_type, const void* struct_data);
 
 }  // namespace cas::crypto

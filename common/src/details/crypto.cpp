@@ -448,54 +448,6 @@ sec_vector<unsigned char> SignHash(HCRYPTHASH hash, DWORD key_spec /* = AT_SIGNA
 }
 
 
-void VerifySignature(HCRYPTHASH hash, HCRYPTKEY verification_key, const sec_vector<unsigned char>& signature)
-{
-    if (!CryptVerifySignature(hash, signature.data(), signature.size(), verification_key, nullptr, 0))
-    {
-        error::ThrowLast();
-    }
-}
-
-
-sec_vector<unsigned char> EncodeObject(DWORD encoding_type, LPCSTR struct_type, const void* struct_data)
-{
-    DWORD buffer_size = 0;
-    if (!CryptEncodeObject(encoding_type, struct_type, struct_data, nullptr, &buffer_size))
-    {
-        error::ThrowLast();
-    }
-
-    sec_vector<unsigned char> result(buffer_size, 0);
-    if (!CryptEncodeObject(encoding_type, struct_type, struct_data, result.data(), &buffer_size))
-    {
-        error::ThrowLast();
-    }
-
-    return result;
-}
-
-
-sec_vector<unsigned char> SignAndEncodeCertificate(HCRYPTPROV provider, DWORD key_specification, DWORD encoding_type,
-    LPCSTR struct_type, const void* struct_data, PCRYPT_ALGORITHM_IDENTIFIER signature_algorithm)
-{
-    DWORD buffer_size = 0;
-    if (!CryptSignAndEncodeCertificate(provider, key_specification, encoding_type, struct_type,
-            struct_data, signature_algorithm, nullptr, nullptr, &buffer_size))
-    {
-        error::ThrowLast();
-    }
-
-    sec_vector<unsigned char> result(buffer_size, 0);
-    if (!CryptSignAndEncodeCertificate(provider, key_specification, encoding_type, struct_type,
-            struct_data, signature_algorithm, nullptr, result.data(), &buffer_size))
-    {
-        error::ThrowLast();
-    }
-
-    return result;
-}
-
-
 sec_vector<unsigned char> SignMessage(PCCERT_CONTEXT signing_certificate, const sec_vector<unsigned char>& message)
 {
     CRYPT_SIGN_MESSAGE_PARA sign_patameters {};
@@ -525,6 +477,15 @@ sec_vector<unsigned char> SignMessage(PCCERT_CONTEXT signing_certificate, const 
 }
 
 
+void VerifySignature(HCRYPTHASH hash, HCRYPTKEY verification_key, const sec_vector<unsigned char>& signature)
+{
+    if (!CryptVerifySignature(hash, signature.data(), signature.size(), verification_key, nullptr, 0))
+    {
+        error::ThrowLast();
+    }
+}
+
+
 void VerifySignature(const sec_vector<unsigned char>& signed_message, DWORD signature_index /* = 0 */)
 {
     CRYPT_VERIFY_MESSAGE_PARA verify_parameters {};
@@ -536,6 +497,45 @@ void VerifySignature(const sec_vector<unsigned char>& signed_message, DWORD sign
     {
         error::ThrowLast();
     }
+}
+
+
+sec_vector<unsigned char> SignAndEncodeCertificate(HCRYPTPROV provider, DWORD key_specification, DWORD encoding_type,
+    LPCSTR struct_type, const void* struct_data, PCRYPT_ALGORITHM_IDENTIFIER signature_algorithm)
+{
+    DWORD buffer_size = 0;
+    if (!CryptSignAndEncodeCertificate(provider, key_specification, encoding_type, struct_type,
+            struct_data, signature_algorithm, nullptr, nullptr, &buffer_size))
+    {
+        error::ThrowLast();
+    }
+
+    sec_vector<unsigned char> result(buffer_size, 0);
+    if (!CryptSignAndEncodeCertificate(provider, key_specification, encoding_type, struct_type,
+            struct_data, signature_algorithm, nullptr, result.data(), &buffer_size))
+    {
+        error::ThrowLast();
+    }
+
+    return result;
+}
+
+
+sec_vector<unsigned char> EncodeObject(DWORD encoding_type, LPCSTR struct_type, const void* struct_data)
+{
+    DWORD buffer_size = 0;
+    if (!CryptEncodeObject(encoding_type, struct_type, struct_data, nullptr, &buffer_size))
+    {
+        error::ThrowLast();
+    }
+
+    sec_vector<unsigned char> result(buffer_size, 0);
+    if (!CryptEncodeObject(encoding_type, struct_type, struct_data, result.data(), &buffer_size))
+    {
+        error::ThrowLast();
+    }
+
+    return result;
 }
 
 }  // namespace cas::crypto

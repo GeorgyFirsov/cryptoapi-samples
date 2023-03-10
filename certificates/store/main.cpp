@@ -61,18 +61,6 @@ static constexpr auto kPurgeDescription  = "removes everything (stores, certs, .
 
 
 /**
- * @brief Key container name
- */
-static constexpr auto kKeyContainer = L"CryptoLabContainer";
-
-
-/**
- * @brief Certificate issuer name
- */
-static constexpr auto kCertIssuer = "Georgy Firsov CA";
-
-
-/**
  * @brief Creates a self signed certificate and adds it into a store
  */
 cas::crypto::Certificate CreateSelfSignedCertificate(HCRYPTPROV provider)
@@ -84,8 +72,8 @@ cas::crypto::Certificate CreateSelfSignedCertificate(HCRYPTPROV provider)
     CERT_RDN_ATTR name_attribute = {
         const_cast<LPSTR>("2.5.4.3"),
         CERT_RDN_PRINTABLE_STRING,
-        strlen(kCertIssuer),
-        (BYTE*)kCertIssuer
+        strlen(cert::kCertIssuer),
+        (BYTE*)cert::kCertIssuer
     };
 
     CERT_RDN rdn = {
@@ -170,7 +158,7 @@ int wmain(int argc, wchar_t** argv)
                                  ? 0
                                  : CRYPT_NEWKEYSET;
 
-            cas::crypto::Provider provider(kKeyContainer, nullptr, PROV_RSA_FULL, flags);
+            cas::crypto::Provider provider(cert::kKeyContainer, nullptr, PROV_RSA_FULL, flags);
             cas::crypto::Key key(provider, AT_SIGNATURE);
 
             //
@@ -226,7 +214,7 @@ int wmain(int argc, wchar_t** argv)
             //
 
 #pragma warning(suppress : 26444)  // Unnamed local variable
-            cas::crypto::Provider(kKeyContainer, nullptr, PROV_RSA_FULL, CRYPT_DELETE_KEYSET);
+            cas::crypto::Provider(cert::kKeyContainer, nullptr, PROV_RSA_FULL, CRYPT_DELETE_KEYSET);
 
             //
             // Delete cert store

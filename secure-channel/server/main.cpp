@@ -115,7 +115,7 @@ int wmain(int argc, wchar_t** argv)
         pipe.SendMessage<sc::proto::Payload>(ciphertext);
         pipe.SendMessage<sc::proto::Payload>(signature);
 
-        std::wcout << L"Encrypted message with signature sent to client\n";
+        std::wcout << L"\nEncrypted message with signature sent to client\n";
 
         //
         // Wait until client process ends to close message queue safe.

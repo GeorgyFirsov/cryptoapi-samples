@@ -65,7 +65,7 @@ int wmain()
         // Get subject's public key info
         //
 
-		cas::crypto::Provider provider(PROV_RSA_FULL);
+        cas::crypto::Provider provider(PROV_RSA_FULL);
         cas::crypto::PublicKeyInfo public_key_info(provider, AT_SIGNATURE);
 
         //

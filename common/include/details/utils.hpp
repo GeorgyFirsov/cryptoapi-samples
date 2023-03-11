@@ -111,12 +111,12 @@ class Event final
 
 public:
     /**
-     * 
+     * @brief Event creation disposition
      */
     enum class Disposition
     {
-        kCreate,
-        kOpen
+        kCreate, /**< Create new event */
+        kOpen    /**< Open existing named event */
     };
 
 public:

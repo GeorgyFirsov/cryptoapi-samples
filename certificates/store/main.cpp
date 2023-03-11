@@ -92,11 +92,14 @@ cas::crypto::Certificate CreateSelfSignedCertificate(HCRYPTPROV provider)
     //
     // Now let's create certificate itself. It will be valid from the current
     // moment of time for one year.
-    // SHA1RSA will be used as signature algorithm.
+    // SHA256RSA will be used as signature algorithm.
     // Certificate will not contain any extensions.
     //
 
-    return cas::crypto::Certificate::CreateSelfSigned(provider, &issuer);
+    CRYPT_ALGORITHM_IDENTIFIER signature_algorithm {};
+    signature_algorithm.pszObjId = const_cast<LPSTR>(szOID_RSA_SHA256RSA);
+
+    return cas::crypto::Certificate::CreateSelfSigned(provider, &issuer, 0, nullptr, &signature_algorithm);
 }
 
 

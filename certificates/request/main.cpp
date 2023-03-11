@@ -85,7 +85,7 @@ int wmain()
         //
 
         CRYPT_ALGORITHM_IDENTIFIER signature_algorithm {};
-        signature_algorithm.pszObjId = const_cast<LPSTR>(szOID_OIWSEC_sha1RSASign);
+        signature_algorithm.pszObjId = const_cast<LPSTR>(szOID_RSA_SHA256RSA);
 
         const auto signed_request = cas::crypto::SignAndEncodeCertificate(provider, AT_KEYEXCHANGE,
             PKCS_7_ASN_ENCODING | X509_ASN_ENCODING, X509_CERT_REQUEST_TO_BE_SIGNED,

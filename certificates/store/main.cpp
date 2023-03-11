@@ -137,6 +137,12 @@ int wmain(int argc, wchar_t** argv)
             std::cout << options << std::endl;
             return -1;
         }
+        
+        //
+        // Well.. Actually it will be much better to check if passed command line 
+        // parameters are valid (some of them are mutually exclusive), but it is not 
+        // a purpose of the task, so I omit these checks here
+        //
 
         po::notify(variables);
 
@@ -186,8 +192,7 @@ int wmain(int argc, wchar_t** argv)
             std::wcout << L"\nCreated certificate SHA1 hash in Base64:\n";
             std::cout << cas::enc::Base64Encode(certificate_hash);
         }
-
-        if (!variables[kDelete].empty())
+        else if (!variables[kDelete].empty())
         {
             //
             // Parse Base64 SHA1 hash of certificate
@@ -209,8 +214,7 @@ int wmain(int argc, wchar_t** argv)
 
             std::wcout << L"Certificate was removed successfully\n";
         }
-
-        if (!variables[kPurge].empty())
+        else if (!variables[kPurge].empty())
         {
             //
             // Delete key container

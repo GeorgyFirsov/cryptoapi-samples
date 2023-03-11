@@ -14,7 +14,7 @@ Labs for development and exploitation of cryptographic infrastructure course. Na
 - [Symmetric key exchange between two processes using exchange key pair][5]
 - [Sharing a verification key between two processes][5]
 - [Encrypting and signing a message using][5] ["Base Cryptography Functions"][ext-1]
-- [Decrypting and verifying message's signature using "Base Cryptography Functions"][5]
+- [Decrypting and verifying message's signature using][5] ["Base Cryptography Functions"][ext-1]
 - [Creating a certificate request][6]
 - [Creating (removing) certificate storage, importing (removing) certificate into (from) storage][7]
 - [Signing a message and verifying message's signature using][8] ["Simplified Message Functions"][ext-2]
